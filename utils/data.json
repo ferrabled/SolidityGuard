@@ -1,0 +1,117 @@
+{
+  "reentrancy": {
+    "vulnerable": {
+      "vulnerability": "Reentrancy Vulnerability",
+      "description": "Reentrancy vulnerability is a security flaw found in Solidity smart contracts where a contract can be repeatedly called before the previous call has completed, potentially allowing malicious actors to manipulate the contract's state or control its execution flow. This vulnerability arises when a contract interacts with external contracts and fails to properly manage the order of execution and state changes. By exploiting reentrancy, an attacker can repeatedly call a contract's function and invoke their own malicious callback, potentially draining funds or causing undesired effects in the contract's logic. Proper handling of external calls and state management is crucial."
+    },
+    "modifier":{
+      "vulnerability": "Possible Reentrancy vulnerability, modifier found",
+      "description": ""
+    }
+  },
+  "selfdestruct": {
+    "vulnerable": {
+      "vulnerability": "SelfDestruct Vulnerability",
+      "description": "This vulnerability arises when the selfdestruct function is not properly handled. The selfdestruct function allows a contract to intentionally destroy itself and transfer any remaining funds to a designated address. However, if this function is not used carefully, it can lead to unintended consequences. The vulnerability occurs when the selfdestruct function is called without appropriate checks or validations. Malicious actors can exploit this vulnerability by deploying a malicious contract and tricking the targeted contract into executing selfdestruct. As a result, all the remaining funds in the targeted contract are transferred to the attacker's designated address, rendering them inaccessible to the contract owner and other legitimate users."
+    },
+    "require owner":{
+      "vulnerability": "Possible selfdestruct vulnerability, require owner found",
+      "description": ""
+    },
+    "onlyOwner":{
+      "vulnerability": "Possible selfdestruct vulnerability, OnlyOwner found",
+      "description": ""
+    },
+    "private":{
+      "vulnerability": "Possible selfdestruct vulnerability, Private found",
+      "description": ""
+    }
+  },
+  "uncheckedCall": {
+    "vulnerable": {
+      "vulnerability": "Low-level call, unchecked return statement Vulnerability",
+      "description": "The unchecked call vulnerability refers to a security weakness in Solidity smart contracts where the return value of certain low-level functions, such as 'call', 'callcode', 'delegatecall', 'send', and 'staticcall', is not properly checked. These functions allow contracts to interact with other contracts, but if the return value is not adequately verified, it can lead to unexpected behaviors and potential vulnerabilities. When an unchecked call is made, the contract does not verify the success or failure of the called function. This can result in various issues, including reentrancy attacks, where an attacker exploits the unchecked call to recursively call back into the calling contract and manipulate its state. Additionally, if the return value is not validated, it could lead to erroneous assumptions about the execution status or data received, potentially causing critical security vulnerabilities."
+    },
+    "nonCall":{
+      "vulnerability": "Possible unchecked call vulnerability",
+      "description": ""
+    }
+  },
+  "pragmaVersion": {
+    "gap_too_big": {
+      "vulnerability": "Major Gap beetween pragma versions",
+      "description": ""
+    },
+    "major_outdated":{
+      "vulnerability": "Solidity version [Major] outdated",
+      "description": ""
+    },
+    "minor_outdated":{
+      "vulnerability": "Solidity version [Minor] outdated",
+      "description": ""
+    },
+    "micro_outdated":{
+      "vulnerability": "Solidity version [Micro] outdated",
+      "description": ""
+    }
+  },
+  "integer": {
+    "outdated": {
+      "vulnerability": "Integer Overflow & Underflow [Outdated Version]",
+      "description": "Integer overflow and underflow are vulnerabilities found in Solidity smart contracts in versions prior to 0.8.0. Integer overflow occurs when the value of an integer variable exceeds its maximum range, causing it to wrap around to the minimum value. On the other hand, integer underflow happens when the value goes below its minimum range, it causing it to wrap around to the maximum value. These vulnerabilities can lead to unexpected calculations and behaviors, potentially allowing malicious actors to manipulate the contract's state or control its execution flow."
+    },
+    "unchecked":{
+      "vulnerability": "Integer Overflow & Underflow [Unchecked Modifier]",
+      "description": "Integer overflow and underflow happen when the unchecked modifier is used, it is advised to use the unchecked modifier carefully. When the unchecked modifier is used, arithmetic operations on integer variables are performed without boundary checks. This can lead to unexpected and potentially malicious behavior if the calculations exceed the maximum or minimum values of the integer type, causing values to wrap around to the opposite end. This vulnerability can result in incorrect calculations, unexpected behaviors, or even the loss of funds in financial contracts."
+    }
+  },
+  "timestamp": {
+    "block.timestamp": {
+      "vulnerability": "Block Timestamp Manipulation Vulnerability [block.timestamp]",
+      "description": ""
+    },
+    "block.now":{
+      "vulnerability": "Block Timestamp Manipulation Vulnerability [block.now]",
+      "description": ""
+    },
+    "block.number":{
+      "vulnerability": "Block Timestamp Manipulation Vulnerability [block.number]",
+      "description": ""
+    }
+  },
+  "tx.origin": {
+    "vulnerable": {
+      "vulnerability": "Use of tx.origin vulnerability",
+      "description": "This vunerability happens when the tx.origin global variable is used for access control or authentication purposes. This variable provides the original external sender of the transaction, but relying on it for security checks can lead to exploitable vulnerabilities. The vulnerability occurs because tx.origin does not represent the direct caller of the contract's function. If there is a chain of contract calls or interactions, the tx.origin will always reflect the original external sender, even if an intermediate contract invoked the function. This can be manipulated by attackers who control intermediate contracts to impersonate the original sender."
+    }
+  },
+  "dos": {
+    "for": {
+      "vulnerability": "Use of for loop",
+      "description": ""
+    },
+    "while": {
+      "vulnerability": "Use of while loop",
+      "description": ""
+    }
+  },
+  "delegatecall": {
+    "advisory": {
+      "vulnerability": "Use of delegatecall",
+      "description": ""
+    }
+  },
+  "transfer": {
+    "advisory": {
+      "vulnerability": "Use of ",
+      "description": ""
+    }
+  },
+  "send": {
+    "advisory": {
+      "vulnerability": "Use of ",
+      "description": ""
+    }
+  }
+
+}
