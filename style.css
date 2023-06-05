@@ -1,3 +1,46 @@
+body{
+    margin: 0;
+}
+
+.pageHeader{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    padding-left: 5%;
+    padding-right: 5%;
+    margin-bottom: 5vmin;
+    padding-top: 1vmin;
+    padding-bottom: 1vmin;  
+    background-color: whitesmoke;
+    position: sticky;
+    top: 0;
+    height: 60px;
+
+    
+}
+.separator{
+    width: 200px;
+}
+
+.iconName{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    min-width: 195px;
+    flex-wrap: wrap;
+    font-weight: bold;
+    font-size: 22px;
+    color: #f36d33;
+}
+
+.iconName > img {
+    margin-top: -7px;
+}
+
+
 .finding{
     text-align: left;
     box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
@@ -5,8 +48,8 @@
     padding: 5vmin;
     padding-top: 1vmin;
     padding-bottom: 3vmin;
-    margin-right: 15%;
-    margin-left: 15%;
+    margin-right: 10%;
+    margin-left: 10%;
     margin-bottom: 5vmin;
 }
 
@@ -20,7 +63,34 @@ h3{
     color: #ff5912;
 }
 
+.logo{
+    align-items: center;
+    justify-content: space-between;
+    margin-left: 5%;
+    margin-right: 5%;
+    font-size: 15px;
+}
 
+.container{
+    margin-right: 5%;
+    margin-left: 5%;
+    margin-bottom: 5vmin;
+}
+
+p{
+    white-space: pre-line;
+    font-size: 17px;
+
+}
+
+.SGuardHeader{
+    display: flex;
+    flex-direction: row;
+    font-size: 2.5vmin;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: space-between;
+}
 
 .info-row{
     margin-top: 30px;
@@ -33,7 +103,7 @@ pre {
     color: #666;
     page-break-inside: avoid;
     font-family: monospace;
-    font-size: 15px;
+    font-size: 13px;
     line-height: 1.6;
     margin-bottom: 1.6em;
     max-width: 100%;
@@ -41,12 +111,6 @@ pre {
     padding: 1em 1.5em;
     display: block;
     word-wrap: break-word;
-}
-
-.requires{
-    margin-right: 15%;
-    margin-left: 15%;
-    margin-bottom: 5vmin;
 }
 
 .requires-grid{

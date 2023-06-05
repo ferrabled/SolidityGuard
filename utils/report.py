@@ -17,11 +17,38 @@ def generate_html(findings: list, recommendations: list, functions: list, requir
         <link rel="stylesheet" href="style.css">
         <title>Report</title>
         </head>
-    '''
-    body = '''
         <body>
+    '''
+    pageheader = '''
+        <div class="pageHeader">
+            <div class="iconName"> <img src="icon.png" alt="Logo" width="40" height="40"> Solidity Guard </div>
+            <div class="separator"> </div>
+            <a href="#dashboard"> Dashboard </a>
+            <a href="#findings"> Findings </a>
+            <a href="#requires"> Requires </a>
+        </div>
+        '''
+
+    body = '''
+        <div class="container">
         <h1>Report</h1>
-        <p>This is an automated report created with the tool</p>
+        <div class="SGuardHeader">
+            <div class='Text'>
+                <p>This is an automated report created with the tool <b>Solidity Guard</b>. This tool searches for vulnerabilities in the source code of Solidity Smart contracts with static analysis by traversing its Abstract Syntax Tree (AST). There are several detectors developed, that can find:
+                <u>Reentrancy</u> vulnerabilities, unchecked low level calls, <u>selfdestructs</u> not protected, <u>tx.origin</u> usage, possible <u>overflows & underflows</u> vulnerabilities and <u>timestamps</u> calls. 
+                Some advices to the developer are given as well, as reminders to review the integrity and correctness of <u>delegatecall</u>, and possible <u>denial of services</u> findings, due to for and while loops.
+                Another functionality created is a <u>require checker</u>, that will recommend the use of a modifier when a require is found 3 or more times. 
+                The findings will be shown in the next dashboard. </p>   
+            </div>
+            <div class='logo'>
+                <img src="icon.png" alt="Logo" width="100" height="100">
+                <div class='Links'>
+                    <a href="github.com/ferrabled/SolidiyGuard">Github</a>
+                    <a href="mailto:ferrabled@gmail.com">Contact</a>
+                </div>
+            </div>
+        </div>
+        </div>
     '''
 
     footer = '''
@@ -30,8 +57,16 @@ def generate_html(findings: list, recommendations: list, functions: list, requir
     '''
     rec_Text = '''
         </div>
-    </div>'''
+    '''
 
+    f_header = '''
+        <div class="container" id="findings">
+            <h2>Findings</h2> 
+    '''
+
+    f_footer = '''
+        </div>
+        '''
     f_warning = ""
     f_vulns = ""
     cont = 0
@@ -83,10 +118,13 @@ def generate_html(findings: list, recommendations: list, functions: list, requir
     file_path = os.path.abspath(os.path.join(os.getcwd(), file_rel_path))
     with open(file_path, "w") as file:
         file.write(header)
+        file.write(pageheader)
         file.write(body)
         file.write(dashboard)
+        file.write(f_header)
         file.write(f_vulns)
         file.write(f_warning)
+        file.write(f_footer)
         file.write(require_block)
         file.write(footer)
     print("Report generated")
@@ -94,7 +132,7 @@ def generate_html(findings: list, recommendations: list, functions: list, requir
 
 def generate_dashboard(data):
     dashboard = '''
-        <div class="dashboard">
+        <div class="container" id="dashboard">
             <h2>Dashboard</h2>
             <div class="dash-row">
             <div class="analyzed">
@@ -140,7 +178,7 @@ def generate_dashboard(data):
 def generate_require(requires):
     print("Generating require report")
     require_header = '''
-        <div class="requires">
+        <div class="container" id="requires">
             <h2>Requires</h2>
             <div class="info-row">
                 <h4>The following requires have been found several times. It is advisabe to replace them with a modifier</h4>

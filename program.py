@@ -90,9 +90,12 @@ def parse_require(contractPath, require):
 
 def main():
     # TODO: DELETE VARIABLES
-    contractPath, chatbot = front.main()
-    contractPath = "./contracts/nonvuln_dos.sol"
+    #contractPath, chatbot = front.main()
+    contractPath = "./contracts/vuln_dos.sol"
     chatbot = False
+    if(contractPath == None):
+        return
+
 
     start_time = time.time()
     with open(contractPath, "r") as file:   
