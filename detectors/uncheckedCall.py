@@ -23,7 +23,6 @@ class SolidityCallVisitor(SolidityVisitor):
 
             bool_node = self.find_nearest_ancestor_of_type(call_node, SolidityParser.VariableDeclarationStatementContext)
             if bool_node is None:
-                print("Possible unchecked call found")
                 start, end = get_function_start_end(call_node) 
                 findings.append(['uncheckedCall', 'vulnerable', call_node.getPayload().line, [start, end]])
 

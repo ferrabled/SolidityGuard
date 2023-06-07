@@ -7,6 +7,7 @@ from utils import report, front, openAI
 import subprocess
 import os
 import time
+import threading
 
 '''
 TODO // TASK LIST //
@@ -91,11 +92,10 @@ def parse_require(contractPath, require):
 def main():
     # TODO: DELETE VARIABLES
     #contractPath, chatbot = front.main()
-    contractPath = "./contracts/vuln_dos.sol"
+    contractPath = "./contracts/all.sol"
     chatbot = False
     if(contractPath == None):
         return
-
 
     start_time = time.time()
     with open(contractPath, "r") as file:   
@@ -110,40 +110,66 @@ def main():
     # Generate the abstract syntax tree (AST)
     tree = parser.sourceUnit()
 
-    visitor = reentrancy.SolidityCallVisitor()
-    visitor.visit(tree)
-    findings = add_findings([], reentrancy.findings)
+    def reentrancy_visitor():
+        visitor = reentrancy.SolidityCallVisitor()
+        visitor.visit(tree)
 
-    visitor = uncheckedCall.SolidityCallVisitor()
-    visitor.visit(tree)
-    findings = add_findings(findings, uncheckedCall.findings)
+    def unchecked_call_visitor():
+        visitor = uncheckedCall.SolidityCallVisitor()
+        visitor.visit(tree)
 
-    visitor = selfdestruct.SolidityCallVisitor()
-    visitor.visit(tree)
-    findings = add_findings(findings, selfdestruct.findings)
+    def selfdestruct_visitor():
+        visitor = selfdestruct.SolidityCallVisitor()
+        visitor.visit(tree)
 
-    visitor = versions.SolidityCallVisitor()
-    visitor.visit(tree)
-    findings = add_findings(findings, versions.findings)
+    def versions_visitor():
+        visitor = versions.SolidityCallVisitor()
+        visitor.visit(tree)
 
-    visitor = integer.SolidityCallVisitor()
-    visitor.visit(tree)
-    findings = add_findings(findings, integer.findings)
+    def integer_visitor():
+        visitor = integer.SolidityCallVisitor()
+        visitor.visit(tree)
 
-    visitor = timestamp.SolidityCallVisitor()
-    visitor.visit(tree)
-    findings = add_findings(findings, timestamp.findings)
-
-    visitor = statement_checker.SolidityCallVisitor()
-    visitor.visit(tree)
-    findings = add_findings(findings, statement_checker.findings)
-
-    visitor = denialOfService.SolidityCallVisitor()
-    visitor.visit(tree)
-    findings = add_findings(findings, denialOfService.findings)
+    def timestamp_visitor():
+        visitor = timestamp.SolidityCallVisitor()
+        visitor.visit(tree)
     
-    visitor = require.SolidityCallVisitor()
-    visitor.visit(tree)
+
+    def statement_checker_visitor():
+        visitor = statement_checker.SolidityCallVisitor()
+        visitor.visit(tree)
+
+    def denial_of_service_visitor():
+        visitor = denialOfService.SolidityCallVisitor()
+        visitor.visit(tree)
+    
+    def require_visitor():
+        visitor = require.SolidityCallVisitor()
+        visitor.visit(tree)
+
+    #Threading for the detectors
+    threading.Thread(target=reentrancy_visitor).start()
+    threading.Thread(target=unchecked_call_visitor).start()
+    threading.Thread(target=selfdestruct_visitor).start()
+    threading.Thread(target=versions_visitor).start()
+    threading.Thread(target=integer_visitor).start()
+    threading.Thread(target=timestamp_visitor).start()
+    threading.Thread(target=statement_checker_visitor).start()
+    threading.Thread(target=denial_of_service_visitor).start()
+    threading.Thread(target=require_visitor).start()
+
+    # Wait for the threads to finish
+    while threading.active_count() > 1:
+        time.sleep(0.0001)
+
+    findings = add_findings([], reentrancy.findings)
+    findings = add_findings(findings, uncheckedCall.findings)
+    findings = add_findings(findings, selfdestruct.findings)
+    findings = add_findings(findings, versions.findings)
+    findings = add_findings(findings, integer.findings)
+    findings = add_findings(findings, timestamp.findings)
+    findings = add_findings(findings, statement_checker.findings)
+    findings = add_findings(findings, denialOfService.findings)
     require_dict = require.require_dict
     
     print("Findings: " + str(findings))
