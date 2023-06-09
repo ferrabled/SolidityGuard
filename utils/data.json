@@ -6,7 +6,11 @@
     },
     "modifier":{
       "vulnerability": "Possible Reentrancy vulnerability, modifier found",
-      "description": ""
+      "description": "Although a 'nonReentrant' modifier that could prevent a reentrancy vulnerability has been found, it is advisable to review the function and make sure it is truly securized. Make sure the implementation is ReentrancyGuard from OpenZeppelin"
+    },
+    "mutex":{
+      "vulnerability": "Possible Reentrancy vulnerability, mutex found",
+      "description": "Although a mutex that could prevent a reentrancy vulnerability has been found, it is advisable to review the function and make sure it is securized. The mutex should lock the contract state preventing any unintended change."
     }
   },
   "selfdestruct": {
@@ -16,15 +20,15 @@
     },
     "require owner":{
       "vulnerability": "Possible selfdestruct vulnerability, require owner found",
-      "description": ""
+      "description": "Although a require could prevent calling 'selfdestruct' has been found, it is advisable to review the function and make sure it is securized. Make sure the 'selfdestruct' function can only be called by the owner (contract deployer)."
     },
     "onlyOwner":{
       "vulnerability": "Possible selfdestruct vulnerability, OnlyOwner found",
-      "description": ""
+      "description": "Although a onlyOwner modifier that could prevent calling 'selfdestruct' has been found, it is advisable to review the function and make sure it is securized. Make sure the 'selfdestruct' function can only be called by the owner (contract deployer)."
     },
     "private":{
       "vulnerability": "Possible selfdestruct vulnerability, Private found",
-      "description": ""
+      "description": "Although a private modifier that could prevent calling 'selfdestruct' has been found, it is advisable to review the function and make sure it is securized. Make sure the 'selfdestruct' function can only be called by the owner (contract deployer)."
     }
   },
   "uncheckedCall": {
@@ -34,25 +38,25 @@
     },
     "nonCall":{
       "vulnerability": "Possible unchecked call vulnerability",
-      "description": ""
+      "description": "Although a boolean has been found, it is advisable to review the function and make sure it is well securized. The boolean value should be required to be true, to continue with the function execution."
     }
   },
   "pragmaVersion": {
     "gap_too_big": {
       "vulnerability": "Major Gap beetween pragma versions",
-      "description": ""
+      "description": "The pragma version gap vulnerability refers to a situation where there is a significant difference in the Solidity compiler version specified in the pragma directive and the actual compiler version used for compiling the smart contract. This discrepancy can lead to unexpected behavior, including potential vulnerabilities and compatibility issues. If there is a substantial gap between the versions specified, different compiler versions may introduce changes, bug fixes or security enhancements that affect the interpretation and execution of the contract, potentially leading to relying on outdated or incompatible features, exposing the contract to security vulnerabilities."
     },
     "major_outdated":{
       "vulnerability": "Solidity version [Major] outdated",
-      "description": ""
+      "description": "The major version of the pragma directive in the Solidity smart contract specifies a major compiler version that is outdated compared to the current compiler version. This can result in the contract relying on outdated and potentially insecure features, making it susceptible to known vulnerabilities or attacks that have been addressed in newer compiler versions."
     },
     "minor_outdated":{
       "vulnerability": "Solidity version [Minor] outdated",
-      "description": ""
+      "description": "The minor version of the pragma directive in the Solidity smart contract specifies a minor compiler version that is outdated compared to the current compiler version. This can result in the contract relying on outdated and potentially insecure features, making it susceptible to known vulnerabilities or attacks that have been addressed in newer compiler versions."
     },
     "micro_outdated":{
       "vulnerability": "Solidity version [Micro] outdated",
-      "description": ""
+      "description": "The micro version of the pragma directive in the Solidity smart contract specifies a micro compiler version that is significantly outdated compared to the current compiler version. Even though there aren't major updates in micro versions, it is advisable to update the pragma directive."
     }
   },
   "integer": {
@@ -68,49 +72,49 @@
   "timestamp": {
     "block.timestamp": {
       "vulnerability": "Block Timestamp Manipulation Vulnerability [block.timestamp]",
-      "description": ""
+      "description": "The block timestamp manipulation vulnerability refers to a security issue in Solidity smart contracts that arises when the block.timestamp variable is used for critical operations such as time-based access control or timestamp-based calculations. This value can be manipulated by miners, compromising the integrity and functionality of the contract. If it is being used for critical time operations, it is advisable to avoid relying solely on block.timestamp, but use alternatives as oracles for critical time-dependent operations."
     },
     "block.now":{
       "vulnerability": "Block Timestamp Manipulation Vulnerability [block.now]",
-      "description": ""
+      "description": "Block.now is an alias for block.timestamp, which refers to the current timestamp, for versions prior to 0.8. This value presents a vulnerability when used for critical time-based operations. The value can be manipulated by miners, compromising the integrity and functionality of the contract. If it is being used for critical time operations, it is advisable use alternatives as oracles."
     },
     "block.number":{
-      "vulnerability": "Block Timestamp Manipulation Vulnerability [block.number]",
-      "description": ""
+      "vulnerability": "Misuse of 'block.number' for Time-Dependent operations",
+      "description": "The time between blocks can vary, and using block.number as a measure of time may not accurately reflect real-world time. To address time-dependent operations or access control, it is recommended to use external time oracles or a combination of block.timestamp and block.number to achieve more accurate and reliable time measurements."
     }
   },
   "tx.origin": {
     "vulnerable": {
-      "vulnerability": "Use of tx.origin vulnerability",
+      "vulnerability": "Tx.origin vulnerability",
       "description": "This vunerability happens when the tx.origin global variable is used for access control or authentication purposes. This variable provides the original external sender of the transaction, but relying on it for security checks can lead to exploitable vulnerabilities. The vulnerability occurs because tx.origin does not represent the direct caller of the contract's function. If there is a chain of contract calls or interactions, the tx.origin will always reflect the original external sender, even if an intermediate contract invoked the function. This can be manipulated by attackers who control intermediate contracts to impersonate the original sender."
     }
   },
   "dos": {
     "for": {
-      "vulnerability": "Use of for loop",
-      "description": ""
+      "vulnerability": "Denial of Service (DoS) by for loop",
+      "description": "This vulnerability arises when a for loop is used to iterate over a large number of iterations, causing excessive computational overhead and consuming an excessive amount of gas. If the gas limit is exceeded, the function won't be executed and can lead to funds loss. If the iterations of the loop could surpass the maximum usage of gas, it is advisable to switch to a pull-over-push design. In this design, instead of using a loop, a public function is created to perform the functionality of each iteration, allowing each person to execute it."
     },
     "while": {
-      "vulnerability": "Use of while loop",
-      "description": ""
+      "vulnerability": "Denial of Service (DoS) by while loop",
+      "description": "This vulnerability arises when a while loop is used to iterate over a large number of iterations, causing excessive computational overhead and consuming an excessive amount of gas. If the gas limit is exceeded, the function won't be executed and can lead to funds loss. If the iterations of the loop could surpass the maximum usage of gas, it is advisable to switch to a pull-over-push design. In this design, instead of using a loop, a public function is created to perform the functionality of each iteration, allowing each person to execute it."
     }
   },
   "delegatecall": {
     "advisory": {
-      "vulnerability": "Use of delegatecall",
-      "description": ""
+      "vulnerability": "Delegatecall vulnerability",
+      "description": "Delegatecall is a low-level function that allows a contract to execute code from another contract while preserving the calling contract's storage and context. If an attacker can manipulate the delegatecall to execute malicious code, they may be able to manipulate the state of the calling contract or execute unauthorized operations. The attacker can potentially override important contract functions, bypass access controls, or even take control of the contract's execution flow. This can result in financial losses, unauthorized access, or other malicious activities."
     }
   },
   "transfer": {
     "advisory": {
-      "vulnerability": "Use of ",
-      "description": ""
+      "vulnerability": "Save Gas: change 'transfer' for 'call'",
+      "description": "When using 'transfer', a fixed amount of gas is allocated for the execution of the called contract. This function do not allow for specifying a custom amount of gas or handling the return value, limiting their flexibility. By changing the 'transfer' function by 'call', developers can optimize gas usage, handle exceptions, and react accordingly based on the return value."
     }
   },
   "send": {
     "advisory": {
-      "vulnerability": "Use of ",
-      "description": ""
+      "vulnerability": "Save Gas: change 'send' for 'call'",
+      "description": "When using 'send', a fixed amount of gas is allocated for the execution of the called contract. This function do not allow for specifying a custom amount of gas or handling the return value, limiting their flexibility. By changing the 'send' function by 'call', developers can optimize gas usage, handle exceptions, and react accordingly based on the return value."
     }
   }
 
