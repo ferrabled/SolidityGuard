@@ -10,9 +10,8 @@ class SolidityCallVisitor(SolidityVisitor):
     
     def visitStateVariableDeclaration(self, ctx:SolidityParser.StateVariableDeclarationContext):
         # Check if the variable type is 'bool'
-        if ctx.typeName().getText() == "bool":
+        if "bool" in ctx.typeName().getText():
             # Get the variable name
-            ## TODO Seems to be in instead of ==
             ## print("Found a bool variable: " + str(ctx.identifier().getText()))
             variable_name = ctx.identifier().getText()
             lock_variables.append(variable_name)
@@ -33,8 +32,6 @@ class SolidityCallVisitor(SolidityVisitor):
             if not has_nonReentrant:
                 # Obtain the line where the call is
                 ## print("LINE: " + str(call_line))
-
-                #TODO error cannot unpack non-iterable NoneType object
                 require_mutex_line, mutex_var = self.find_lock_variables(ctx)
                 ## print("Lock variables: " + str(lock_variables))
 

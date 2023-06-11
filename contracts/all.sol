@@ -69,7 +69,7 @@ function withdraw(uint amount) payable public returns (bool) {
     lockBalances = true;
     (bool success, ) = msg.sender.call{value:balances[msg.sender]}("");
 
-    if (success) { // Normally insecure, but the mutex saves it
+    if (success) {
       balances[msg.sender] -= amount;
     }
 

@@ -17,14 +17,14 @@ class SolidityCallVisitor(SolidityVisitor):
         # compare the version from the source code with the latest version
         # if the version from the source code is lower than the latest version, then the source code is outdated
         last_version = version.parse("0.8.20")
-        try:
-            last_version = requests.get('https://docs.soliditylang.org/').headers['X-RTD-Version'].replace('v', '')  
-            last_version = version.parse(str(last_version))
-        except Exception as e:
-            print(e)
-            print("Error retrieving the latest version of Solidity")
-        
-
+        connection = False
+        if(connection):
+            try:
+                last_version = requests.get('https://docs.soliditylang.org/').headers['X-RTD-Version'].replace('v', '')  
+                last_version = version.parse(str(last_version))
+            except Exception as e:
+                print(e)
+                print("Error retrieving the latest version of Solidity")
         
         if(ctx.version().getChildCount() > 1):
             for i in range(ctx.version().getChildCount()):

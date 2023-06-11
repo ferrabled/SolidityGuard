@@ -23,7 +23,6 @@ class SolidityCallVisitor(SolidityVisitor):
             contract_version = version.parse(ctx.version().getChild(0).getChild(1).getText())
         
         if(contract_version < version.parse("0.8.0")):
-            print("The source code is outdated")
             findings.append(['integer', 'outdated', ctx.start.line, [ctx.start.line, ctx.start.line]])
 
         return super().visitPragmaValue(ctx)
