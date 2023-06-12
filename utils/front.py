@@ -30,10 +30,11 @@ def main():
     # Create the main window
     window = tk.Tk()
     window.title("SafetyGuard")
+    window.iconphoto(False, tk.PhotoImage(file="./icon.png"))
     window.geometry("300x200")
 
     # Create a label for the checkbox
-    checkbox_label = tk.Label(window, text="Use chatbot for recommendations")
+    checkbox_label = tk.Label(window, text="Use AI Recommender")
     checkbox_label.pack(pady=10)
 
     # Create the checkbox

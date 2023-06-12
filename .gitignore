@@ -1,2 +1,4 @@
 
 *.pyc
+
+utils/secrets.json

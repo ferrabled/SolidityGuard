@@ -6,9 +6,9 @@ import os
 base_path = getattr(sys, "_MEIPASS", os.path.abspath("."))
 # Get the path to the JSON file
 json_path = os.path.join(base_path, "utils", "data.json")
-data = json.load(open(json_path, "r"))
+json_data = json.load(open(json_path, "r"))
 
-def generate_html(findings: list, recommendations: list, functions: list, requires: list, dashboard: str):
+def generate_html(findings: list, recommendations: list, functions: list, requires: list, data: list):
     print("Generating html report")
     header = '''
         <!DOCTYPE html>
@@ -71,6 +71,7 @@ def generate_html(findings: list, recommendations: list, functions: list, requir
     f_vulns = ""
     cont = 0
     
+    numwarn = 0
     for finding in findings:
         vuln = finding[0]
         vuln_type = finding[1]
@@ -85,16 +86,19 @@ def generate_html(findings: list, recommendations: list, functions: list, requir
             </div>
             '''
         location = generate_location(finding, functions[cont])
-        # TODO check if the finding is a warning instead of a vulnerability, 
-        # attach it to the end
-        warnings = ['modifier', 'mutex', 'require owner', '', '']
+        # Warnings are attached to the end
+        warnings = ['modifier', 'mutex', 'require owner', 'onlyOwner', 'private', 'nonCall', 'micro_outdated', 'block.timestamp', 'block.number', 'for', 'while', 'advisory']
         if(finding[1] in warnings):
+            numwarn += 1
             f_warning += '''
                 <div class="finding">
-                    <h2>''' + data[vuln][vuln_type]["vulnerability"] + '''</h2>
+                    <div class="title">
+                        <h2>''' + json_data[vuln][vuln_type]["vulnerability"] + '''</h2>
+                        <div class="warn">Warning</div>
+                    </div>
                     <div class="info-row">
                         <h3>Description</h3>
-                        <p>''' + data[vuln][vuln_type]["description"] + '''</p>
+                        <p>''' + json_data[vuln][vuln_type]["description"] + '''</p>
                     </div>
                     <div class="info-row">
                         <h3>Code Location</h3>
@@ -102,10 +106,13 @@ def generate_html(findings: list, recommendations: list, functions: list, requir
         else:
             f_vulns +='''
                 <div class="finding">
-                    <h2>''' + data[vuln][vuln_type]["vulnerability"] + '''</h2>
+                    <div class="title">
+                        <h2>''' + json_data[vuln][vuln_type]["vulnerability"] + '''</h2>
+                        <div class="vuln"><b>Vulnerability</b></div>
+                    </div>
                     <div class="info-row">
                         <h3>Description</h3>
-                        <p>''' + data[vuln][vuln_type]["description"] + '''</p>
+                        <p>''' + json_data[vuln][vuln_type]["description"] + '''</p>
                     </div>
                     <div class="info-row">
                         <h3>Code Location</h3>
@@ -113,6 +120,8 @@ def generate_html(findings: list, recommendations: list, functions: list, requir
         cont += 1
 
     require_block = generate_require(requires)
+    numvulns = data[5] - numwarn
+    dashboard = generate_dashboard(data, numvulns, numwarn)
 
     file_rel_path = "./report.html"
     file_path = os.path.abspath(os.path.join(os.getcwd(), file_rel_path))
@@ -130,7 +139,9 @@ def generate_html(findings: list, recommendations: list, functions: list, requir
     print("Report generated")
 
 
-def generate_dashboard(data):
+def generate_dashboard(data, numvulns, numwarn):
+    print(data)
+    print("DATA")
     dashboard = '''
         <div class="container" id="dashboard">
             <h2>Dashboard</h2>
@@ -138,35 +149,43 @@ def generate_dashboard(data):
             <div class="analyzed">
                 <div class="dcard">
                     <h3>Lines of code</h3>
-                    <p>''' + str(data[0]) + '''</p>
+                    <h2>''' + str(data[0]) + '''</h2>
                 </div>
                 <div class="dcard">
                     <h3>Contracts</h3>
-                    <p>''' + str(data[1]) + '''</p>
+                    <h2>''' + str(data[1]) + '''</h2>
                 </div>
                 <div class="dcard">
                     <h3>Functions</h3>
-                    <p>''' + str(data[2]) + '''</p>
+                    <h2>''' + str(data[2]) + '''</h2>
                 </div>
             </div>
             <div class="findings">
                 <div class="dcard">
                     <h3>Emits</h3>
-                    <p>''' + str(data[3]) + '''</p>
+                    <h2>''' + str(data[3]) + '''</h2>
                 </div>
                 <div class="dcard">
                     <h3>Requires</h3>
-                    <p>''' + str(data[4][0]) + '''</p>
+                    <h2>''' + str(data[4][0]) + '''</h2>
                 </div>
                 <div class="dcard">
                     <h3>Repeated Requires</h3>
-                    <p>''' + str(data[4][1]) + '''</p>
+                    <h2>''' + str(data[4][1]) + '''</h2>
                 </div>
             </div>
             <div class="findings">
                 <div class="dcard">
                     <h3>Findings</h3>
-                    <p>''' + str(data[5]) + '''</p>
+                    <h2>''' + str(data[5]) + '''</h2>
+                </div>
+                <div class="dcard">
+                    <h3>Vulns.</h3>
+                    <h2>''' + str(numvulns) + '''</h2>
+                </div>
+                <div class="dcard">
+                    <h3>Warnings</h3>
+                    <h2>''' + str(numwarn) + '''</h2>
                 </div>
             </div>
             </div>
@@ -213,7 +232,6 @@ def generate_require(requires):
     require_block = require_header + require_cards + require_footer
     return require_block
 
-# TODO location can change if it's a version vulnerability
 def generate_location(finding, fun):
     if(finding[2] != 0):
         text = '''<p> The previous vulnerability has been found in the contract ''' \
@@ -225,9 +243,10 @@ def generate_location(finding, fun):
     return text
 
 def generate_report(findings: list, recommendations: list, functions: list, requires: list, data: list):
+    print(data)
+    print("DATA")
     if len(findings) == 0:
         print("No vulnerabilities found")
         return
     print("Generating final report... ")
-    dashboard = generate_dashboard(data)
-    generate_html(findings, recommendations, functions, requires, dashboard)
+    generate_html(findings, recommendations, functions, requires, data)

@@ -16,9 +16,7 @@ body{
     background-color: whitesmoke;
     position: sticky;
     top: 0;
-    height: 60px;
-
-    
+    height: 60px;  
 }
 .separator{
     width: 200px;
@@ -82,6 +80,37 @@ p{
     font-size: 17px;
 
 }
+
+
+
+/*  vuln or warning indicator*/
+.title{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+
+.warn{
+    border: none; /* Remove borders */
+    color: white; /* Add a text color */
+    padding: 14px 28px; /* Add some padding */
+    background-color: #ff9800;
+    font-family: 'Courier New', Courier, monospace;
+    align-items: center;
+}
+
+.vuln{
+    border: none; /* Remove borders */
+    color: white; /* Add a text color */
+    padding: 14px 28px; /* Add some padding */
+    background-color: #f44336;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+
+
 
 .SGuardHeader{
     display: flex;
