@@ -80,7 +80,7 @@ def generate_html(findings: list, recommendations: list, functions: list, requir
             rec_Text = '''
                 <div class="info-row">
                     <h3>Recommendation</h3>
-                    <p> Our Chatbot has recommended the following: </p>
+                    <p> Our AI recommender has said the following: </p>
                     <p>''' + recom + '''</p>
                 </div>
             </div>
