@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import filedialog
+import os, sys
 
 file_path = None  # Declare file_path as a global variable
 
@@ -30,7 +31,13 @@ def main():
     # Create the main window
     window = tk.Tk()
     window.title("SafetyGuard")
-    window.iconphoto(False, tk.PhotoImage(file="./icon.png"))
+    
+    try:
+        base_path = getattr(sys, "_MEIPASS", os.path.abspath("."))
+        icon_path = os.path.join(base_path, "icon.png")
+        window.iconphoto(False, tk.PhotoImage(file=icon_path))
+    except Exception as e:
+        print("Error loading icon: " + str(e))
     window.geometry("300x200")
 
     # Create a label for the checkbox

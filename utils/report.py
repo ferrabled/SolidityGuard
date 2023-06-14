@@ -14,7 +14,7 @@ def generate_html(findings: list, recommendations: list, functions: list, requir
         <!DOCTYPE html>
         <html>
         <head>
-        <link rel="stylesheet" href="style.css">
+        <link rel="stylesheet" href="utils/style.css">
         <title>Report</title>
         </head>
         <body>
