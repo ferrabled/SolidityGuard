@@ -1,4 +1,3 @@
-// SPDX-License-Identifier: BSL-1.0 (Boost Software License 1.0)
 
 /******************************** 
 
@@ -6,22 +5,18 @@
 
 ******************************** */
 
+// SPDX-License-Identifier: BSL-1.0 (Boost Software License 1.0)
 pragma solidity > 0.8.13;
 
 contract InsecureEtherVault {
     mapping (address => uint256) private userBalances;
     address private owner;
 
-    modifier nonReentrant {
-        require(msg.sender == owner, "Must be owner");
-        _;
-    }
-
     function deposit() external payable {
         userBalances[msg.sender] += msg.value;
     }
 
-    function withdrawAll() nonReentrant external {
+    function withdrawAll() external {
         uint256 balance = getUserBalance(msg.sender);
         require(balance > 0, "Insufficient balance");
 

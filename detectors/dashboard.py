@@ -3,23 +3,22 @@ from .language.SolidityVisitor import SolidityVisitor
 from .language.SolidityParser import SolidityParser
 
 '''
-    The data we want to obtain is:
+    The data we obtain is the following one:
     
     [General Data]
-    - Number of contracts ✅
-    - Number of functions ✅
+    - Number of contracts
+    - Number of functions
     - Number of lines of code 
     
-    [Detectors Data]
-    - Number of findings: ✅
-        - Vulnerabilities
-        - Warnings
-        - Advices
-
     [Solidity Data]
-    - Number of emits ✅
-    - Number of requires ✅
-    - Number of requires appearing more than 3 times ✅
+    - Number of emits
+    - Number of requires
+    - Number of requires appearing more than 3 times
+
+    [Detectors Data]
+    - Number of findings (total)
+    - Vulnerabilities
+    - Warnings
 '''
 
 contracts = [0]

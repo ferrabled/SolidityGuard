@@ -1,0 +1,4 @@
+*.py linguist-detectable=true
+*.sol linguist-detectable=true
+*.html linguist-detectable=false
+*.toc linguist-detectable=false
