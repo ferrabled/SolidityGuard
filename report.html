@@ -41,15 +41,15 @@
             <div class="analyzed">
                 <div class="dcard">
                     <h3>Lines of code</h3>
-                    <h2>486</h2>
+                    <h2>505</h2>
                 </div>
                 <div class="dcard">
                     <h3>Contracts</h3>
-                    <h2>16</h2>
+                    <h2>14</h2>
                 </div>
                 <div class="dcard">
                     <h3>Functions</h3>
-                    <h2>38</h2>
+                    <h2>42</h2>
                 </div>
             </div>
             <div class="findings">
@@ -59,25 +59,25 @@
                 </div>
                 <div class="dcard">
                     <h3>Requires</h3>
-                    <h2>22</h2>
+                    <h2>17</h2>
                 </div>
                 <div class="dcard">
                     <h3>Repeated Requires</h3>
-                    <h2>0</h2>
+                    <h2>5</h2>
                 </div>
             </div>
             <div class="findings">
                 <div class="dcard">
                     <h3>Findings</h3>
-                    <h2>49</h2>
+                    <h2>48</h2>
                 </div>
                 <div class="dcard">
                     <h3>Vulns.</h3>
-                    <h2>37</h2>
+                    <h2>29</h2>
                 </div>
                 <div class="dcard">
                     <h3>Warnings</h3>
-                    <h2>12</h2>
+                    <h2>19</h2>
                 </div>
             </div>
             </div>
@@ -98,15 +98,14 @@
                     </div>
                     <div class="info-row">
                         <h3>Code Location</h3>
-                        <p> The previous vulnerability has been found in the contract reentrancy inside the function reentrancy (Line: 72)</p><pre>    function withdrawFunds (uint256 _weiToWithdraw) public {
-        require(balances[msg.sender] >= _weiToWithdraw);
-        // limit the withdrawal
-        require(_weiToWithdraw <= withdrawalLimit);
-        // limit the time allowed to withdraw
-        require(now >= lastWithdrawTime[msg.sender] + 1 weeks);
-        require(msg.sender.call.value(_weiToWithdraw)());
-        balances[msg.sender] -= _weiToWithdraw;
-        lastWithdrawTime[msg.sender] = now;
+                        <p> The previous vulnerability has been found in the contract reentrancy inside the function reentrancy (Line: 23)</p><pre>    function withdrawAll() external {
+        uint256 balance = getUserBalance(msg.sender);
+        require(balance > 0, "Insufficient balance");
+
+        (bool success, ) = msg.sender.call{value: balance}("");
+        require(success, "Failed to send Ether");
+
+        userBalances[msg.sender] = 0;
     }
 </pre></div>
         </div>
@@ -122,15 +121,139 @@
                     </div>
                     <div class="info-row">
                         <h3>Code Location</h3>
-                        <p> The previous vulnerability has been found in the contract reentrancy inside the function reentrancy (Line: 236)</p><pre>    function CashOut(uint _am)
-    {
-        if(_am<=balances[msg.sender])
-        {
-            if(msg.sender.call.value(_am)())
-            {
-                balances[msg.sender]-=_am;
-                TransferLog.AddMessage(msg.sender,_am,"CashOut");
-            }
+                        <p> The previous vulnerability has been found in the contract reentrancy inside the function reentrancy (Line: 65)</p><pre>function withdraw(uint amount) payable public returns (bool) {
+    require(!lockBalances && amount > 0 && balances[msg.sender] >= amount);
+    require(lockBalances);
+    lockBalances = true;
+    (bool success, ) = msg.sender.call{value:balances[msg.sender]}("");
+
+    if (success) {
+      balances[msg.sender] -= amount;
+    }
+
+    lockBalances = false;
+    return true;
+}
+</pre></div>
+        </div>
+    
+                <div class="finding">
+                    <div class="title">
+                        <h2>Reentrancy Vulnerability</h2>
+                        <div class="vuln"><b>Vulnerability</b></div>
+                    </div>
+                    <div class="info-row">
+                        <h3>Description</h3>
+                        <p>Reentrancy vulnerability is a security flaw found in Solidity smart contracts where a contract can be repeatedly called before the previous call has completed, potentially allowing malicious actors to manipulate the contract's state or control its execution flow. This vulnerability arises when a contract interacts with external contracts and fails to properly manage the order of execution and state changes. By exploiting reentrancy, an attacker can repeatedly call a contract's function and invoke their own malicious callback, potentially draining funds or causing undesired effects in the contract's logic. Proper handling of external calls and state management is crucial.</p>
+                    </div>
+                    <div class="info-row">
+                        <h3>Code Location</h3>
+                        <p> The previous vulnerability has been found in the contract reentrancy inside the function reentrancy (Line: 99)</p><pre>    function withdrawAll() external {
+        uint256 balance = getUserBalance(msg.sender);
+        require(balance > 0, "Insufficient balance");
+
+        (bool success, ) = msg.sender.call{value: balance}("");
+        require(success, "Failed to send Ether");
+
+        userBalances[msg.sender] = 0;
+    }
+</pre></div>
+        </div>
+    
+                <div class="finding">
+                    <div class="title">
+                        <h2>Reentrancy Vulnerability</h2>
+                        <div class="vuln"><b>Vulnerability</b></div>
+                    </div>
+                    <div class="info-row">
+                        <h3>Description</h3>
+                        <p>Reentrancy vulnerability is a security flaw found in Solidity smart contracts where a contract can be repeatedly called before the previous call has completed, potentially allowing malicious actors to manipulate the contract's state or control its execution flow. This vulnerability arises when a contract interacts with external contracts and fails to properly manage the order of execution and state changes. By exploiting reentrancy, an attacker can repeatedly call a contract's function and invoke their own malicious callback, potentially draining funds or causing undesired effects in the contract's logic. Proper handling of external calls and state management is crucial.</p>
+                    </div>
+                    <div class="info-row">
+                        <h3>Code Location</h3>
+                        <p> The previous vulnerability has been found in the contract reentrancy inside the function reentrancy (Line: 148)</p><pre>    function claimReward() public {
+        require(msg.sender == winner, "Not winner");
+
+        (bool sent, ) = msg.sender.call{value: address(this).balance}("");
+        require(sent, "Failed to send Ether");
+    }
+</pre></div>
+        </div>
+    
+                <div class="finding">
+                    <div class="title">
+                        <h2>Reentrancy Vulnerability</h2>
+                        <div class="vuln"><b>Vulnerability</b></div>
+                    </div>
+                    <div class="info-row">
+                        <h3>Description</h3>
+                        <p>Reentrancy vulnerability is a security flaw found in Solidity smart contracts where a contract can be repeatedly called before the previous call has completed, potentially allowing malicious actors to manipulate the contract's state or control its execution flow. This vulnerability arises when a contract interacts with external contracts and fails to properly manage the order of execution and state changes. By exploiting reentrancy, an attacker can repeatedly call a contract's function and invoke their own malicious callback, potentially draining funds or causing undesired effects in the contract's logic. Proper handling of external calls and state management is crucial.</p>
+                    </div>
+                    <div class="info-row">
+                        <h3>Code Location</h3>
+                        <p> The previous vulnerability has been found in the contract reentrancy inside the function reentrancy (Line: 215)</p><pre>    function claimReward() public {
+        require(msg.sender == winner, "Not winner");
+
+        (bool sent, ) = msg.sender.call{value: address(this).balance}("");
+        require(sent, "Failed to send Ether");
+    }
+</pre></div>
+        </div>
+    
+                <div class="finding">
+                    <div class="title">
+                        <h2>Reentrancy Vulnerability</h2>
+                        <div class="vuln"><b>Vulnerability</b></div>
+                    </div>
+                    <div class="info-row">
+                        <h3>Description</h3>
+                        <p>Reentrancy vulnerability is a security flaw found in Solidity smart contracts where a contract can be repeatedly called before the previous call has completed, potentially allowing malicious actors to manipulate the contract's state or control its execution flow. This vulnerability arises when a contract interacts with external contracts and fails to properly manage the order of execution and state changes. By exploiting reentrancy, an attacker can repeatedly call a contract's function and invoke their own malicious callback, potentially draining funds or causing undesired effects in the contract's logic. Proper handling of external calls and state management is crucial.</p>
+                    </div>
+                    <div class="info-row">
+                        <h3>Code Location</h3>
+                        <p> The previous vulnerability has been found in the contract reentrancy inside the function reentrancy (Line: 311)</p><pre>    function callVuln() public {
+        msg.sender.call{value: winAmount}("");
+    }
+</pre></div>
+        </div>
+    
+                <div class="finding">
+                    <div class="title">
+                        <h2>Reentrancy Vulnerability</h2>
+                        <div class="vuln"><b>Vulnerability</b></div>
+                    </div>
+                    <div class="info-row">
+                        <h3>Description</h3>
+                        <p>Reentrancy vulnerability is a security flaw found in Solidity smart contracts where a contract can be repeatedly called before the previous call has completed, potentially allowing malicious actors to manipulate the contract's state or control its execution flow. This vulnerability arises when a contract interacts with external contracts and fails to properly manage the order of execution and state changes. By exploiting reentrancy, an attacker can repeatedly call a contract's function and invoke their own malicious callback, potentially draining funds or causing undesired effects in the contract's logic. Proper handling of external calls and state management is crucial.</p>
+                    </div>
+                    <div class="info-row">
+                        <h3>Code Location</h3>
+                        <p> The previous vulnerability has been found in the contract reentrancy inside the function reentrancy (Line: 320)</p><pre>    function call() public {
+        (bool success, ) = msg.sender.call{value: winAmount}("");
+    }
+</pre></div>
+        </div>
+    
+                <div class="finding">
+                    <div class="title">
+                        <h2>Reentrancy Vulnerability</h2>
+                        <div class="vuln"><b>Vulnerability</b></div>
+                    </div>
+                    <div class="info-row">
+                        <h3>Description</h3>
+                        <p>Reentrancy vulnerability is a security flaw found in Solidity smart contracts where a contract can be repeatedly called before the previous call has completed, potentially allowing malicious actors to manipulate the contract's state or control its execution flow. This vulnerability arises when a contract interacts with external contracts and fails to properly manage the order of execution and state changes. By exploiting reentrancy, an attacker can repeatedly call a contract's function and invoke their own malicious callback, potentially draining funds or causing undesired effects in the contract's logic. Proper handling of external calls and state management is crucial.</p>
+                    </div>
+                    <div class="info-row">
+                        <h3>Code Location</h3>
+                        <p> The previous vulnerability has been found in the contract reentrancy inside the function reentrancy (Line: 364)</p><pre>    function spin() external payable {
+        require(msg.value == 10 ether); // must send 10 ether to play
+        require(block.number != pastBlockTime); // only 1 transaction per block
+
+        pastBlockTime = block.timestamp;
+
+        if (block.number % 15 == 0) {
+            (bool sent, ) = msg.sender.call{value: address(this).balance}("");
+            require(sent, "Failed to send Ether");
         }
     }
 </pre></div>
@@ -138,24 +261,20 @@
     
                 <div class="finding">
                     <div class="title">
-                        <h2>Low-level call, unchecked return statement Vulnerability</h2>
+                        <h2>Reentrancy Vulnerability</h2>
                         <div class="vuln"><b>Vulnerability</b></div>
                     </div>
                     <div class="info-row">
                         <h3>Description</h3>
-                        <p>The unchecked call vulnerability refers to a security weakness in Solidity smart contracts where the return value of certain low-level functions, such as 'call', 'callcode', 'delegatecall', 'send', and 'staticcall', is not properly checked. These functions allow contracts to interact with other contracts, but if the return value is not adequately verified, it can lead to unexpected behaviors and potential vulnerabilities. When an unchecked call is made, the contract does not verify the success or failure of the called function. This can result in various issues, including reentrancy attacks, where an attacker exploits the unchecked call to recursively call back into the calling contract and manipulate its state. Additionally, if the return value is not validated, it could lead to erroneous assumptions about the execution status or data received, potentially causing critical security vulnerabilities.</p>
+                        <p>Reentrancy vulnerability is a security flaw found in Solidity smart contracts where a contract can be repeatedly called before the previous call has completed, potentially allowing malicious actors to manipulate the contract's state or control its execution flow. This vulnerability arises when a contract interacts with external contracts and fails to properly manage the order of execution and state changes. By exploiting reentrancy, an attacker can repeatedly call a contract's function and invoke their own malicious callback, potentially draining funds or causing undesired effects in the contract's logic. Proper handling of external calls and state management is crucial.</p>
                     </div>
                     <div class="info-row">
                         <h3>Code Location</h3>
-                        <p> The previous vulnerability has been found in the contract uncheckedCall inside the function uncheckedCall (Line: 72)</p><pre>    function withdrawFunds (uint256 _weiToWithdraw) public {
-        require(balances[msg.sender] >= _weiToWithdraw);
-        // limit the withdrawal
-        require(_weiToWithdraw <= withdrawalLimit);
-        // limit the time allowed to withdraw
-        require(now >= lastWithdrawTime[msg.sender] + 1 weeks);
-        require(msg.sender.call.value(_weiToWithdraw)());
-        balances[msg.sender] -= _weiToWithdraw;
-        lastWithdrawTime[msg.sender] = now;
+                        <p> The previous vulnerability has been found in the contract reentrancy inside the function reentrancy (Line: 389)</p><pre>    function transfer(address payable _to, uint _amount) public {
+        require(tx.origin == owner, "Not owner");
+
+        (bool sent, ) = _to.call{value: _amount}("");
+        require(sent, "Failed to send Ether");
     }
 </pre></div>
         </div>
@@ -171,12 +290,11 @@
                     </div>
                     <div class="info-row">
                         <h3>Code Location</h3>
-                        <p> The previous vulnerability has been found in the contract uncheckedCall inside the function uncheckedCall (Line: 142)</p><pre>    function withdraw() {
+                        <p> The previous vulnerability has been found in the contract uncheckedCall inside the function uncheckedCall (Line: 257)</p><pre>    function withdraw() public payable{
         withdrawalCounter += 1;
-        // calculate the fibonacci number for the current withdrawal user
         // this sets calculatedFibNumber
-        require(fibonacciLibrary.delegatecall(fibSig, withdrawalCounter));
-        msg.sender.transfer(calculatedFibNumber * 1 ether);
+        fibonacciLibrary.delegatecall(abi.encode(fibSig, withdrawalCounter));
+        payable(msg.sender).transfer(calculatedFibNumber * 1 ether);
     }
 </pre></div>
         </div>
@@ -192,8 +310,8 @@
                     </div>
                     <div class="info-row">
                         <h3>Code Location</h3>
-                        <p> The previous vulnerability has been found in the contract uncheckedCall inside the function uncheckedCall (Line: 148)</p><pre>    function() public {
-        require(fibonacciLibrary.delegatecall(msg.data));
+                        <p> The previous vulnerability has been found in the contract uncheckedCall inside the function uncheckedCall (Line: 263)</p><pre>    function pp() public {
+        fibonacciLibrary.delegatecall(msg.data);
     }
 </pre></div>
         </div>
@@ -209,16 +327,13 @@
                     </div>
                     <div class="info-row">
                         <h3>Code Location</h3>
-                        <p> The previous vulnerability has been found in the contract uncheckedCall inside the function uncheckedCall (Line: 236)</p><pre>    function CashOut(uint _am)
-    {
-        if(_am<=balances[msg.sender])
-        {
-            if(msg.sender.call.value(_am)())
-            {
-                balances[msg.sender]-=_am;
-                TransferLog.AddMessage(msg.sender,_am,"CashOut");
-            }
-        }
+                        <p> The previous vulnerability has been found in the contract uncheckedCall inside the function uncheckedCall (Line: 280)</p><pre>    function doSomething(uint _num) public {
+        lib.delegatecall(abi.encodeWithSignature("doSomething(uint256)", _num));
+        address x = tx.origin;
+        //function transfer
+        payable(x).transfer(2);
+        payable(x).send(2);
+
     }
 </pre></div>
         </div>
@@ -234,7 +349,7 @@
                     </div>
                     <div class="info-row">
                         <h3>Code Location</h3>
-                        <p> The previous vulnerability has been found in the contract uncheckedCall inside the function uncheckedCall (Line: 324)</p><pre>    function sendToWinner() public {
+                        <p> The previous vulnerability has been found in the contract uncheckedCall inside the function uncheckedCall (Line: 306)</p><pre>    function sendToWinnerVuln() public {
         require(!payedOut);
         winner.send(winAmount);
         payedOut = true;
@@ -253,25 +368,173 @@
                     </div>
                     <div class="info-row">
                         <h3>Code Location</h3>
-                        <p> The previous vulnerability has been found in the contract uncheckedCall inside the function uncheckedCall (Line: 330)</p><pre>    function withdrawLeftOver() public {
-        require(payedOut);
-        msg.sender.send(this.balance);
+                        <p> The previous vulnerability has been found in the contract uncheckedCall inside the function uncheckedCall (Line: 311)</p><pre>    function callVuln() public {
+        msg.sender.call{value: winAmount}("");
     }
 </pre></div>
         </div>
     
                 <div class="finding">
                     <div class="title">
-                        <h2>Solidity version [Minor] outdated</h2>
+                        <h2>Low-level call, unchecked return statement Vulnerability</h2>
                         <div class="vuln"><b>Vulnerability</b></div>
                     </div>
                     <div class="info-row">
                         <h3>Description</h3>
-                        <p>The minor version of the pragma directive in the Solidity smart contract specifies a minor compiler version that is outdated compared to the current compiler version. This can result in the contract relying on outdated and potentially insecure features, making it susceptible to known vulnerabilities or attacks that have been addressed in newer compiler versions.</p>
+                        <p>The unchecked call vulnerability refers to a security weakness in Solidity smart contracts where the return value of certain low-level functions, such as 'call', 'callcode', 'delegatecall', 'send', and 'staticcall', is not properly checked. These functions allow contracts to interact with other contracts, but if the return value is not adequately verified, it can lead to unexpected behaviors and potential vulnerabilities. When an unchecked call is made, the contract does not verify the success or failure of the called function. This can result in various issues, including reentrancy attacks, where an attacker exploits the unchecked call to recursively call back into the calling contract and manipulate its state. Additionally, if the return value is not validated, it could lead to erroneous assumptions about the execution status or data received, potentially causing critical security vulnerabilities.</p>
                     </div>
                     <div class="info-row">
                         <h3>Code Location</h3>
-                        <p> The previous vulnerability has been found in the contract pragmaVersion inside the function pragmaVersion (Line: 8)</p><pre>pragma solidity ^0.4.19;
+                        <p> The previous vulnerability has been found in the contract uncheckedCall inside the function uncheckedCall (Line: 446)</p><pre>    function refundAll() public {
+        for(uint x; x < refundAddresses.length; x++) { // arbitrary length iteration based on how many addresses participated
+            require(gasleft() > 1000);
+            require(payable(refundAddresses[x]).send(refunds[refundAddresses[x]])); // doubly bad, now a single failure on send will hold up all funds
+        }
+    }
+</pre></div>
+        </div>
+    
+                <div class="finding">
+                    <div class="title">
+                        <h2>Low-level call, unchecked return statement Vulnerability</h2>
+                        <div class="vuln"><b>Vulnerability</b></div>
+                    </div>
+                    <div class="info-row">
+                        <h3>Description</h3>
+                        <p>The unchecked call vulnerability refers to a security weakness in Solidity smart contracts where the return value of certain low-level functions, such as 'call', 'callcode', 'delegatecall', 'send', and 'staticcall', is not properly checked. These functions allow contracts to interact with other contracts, but if the return value is not adequately verified, it can lead to unexpected behaviors and potential vulnerabilities. When an unchecked call is made, the contract does not verify the success or failure of the called function. This can result in various issues, including reentrancy attacks, where an attacker exploits the unchecked call to recursively call back into the calling contract and manipulate its state. Additionally, if the return value is not validated, it could lead to erroneous assumptions about the execution status or data received, potentially causing critical security vulnerabilities.</p>
+                    </div>
+                    <div class="info-row">
+                        <h3>Code Location</h3>
+                        <p> The previous vulnerability has been found in the contract uncheckedCall inside the function uncheckedCall (Line: 455)</p><pre>    function refundAllRequire() public {
+        uint x = 0;
+        while(refundAddresses.length > 5) { // arbitrary length iteration based on how many addresses participated
+            require(gasleft() > 1000);
+            require(payable(refundAddresses[x]).send(refunds[refundAddresses[x]])); // doubly bad, now a single failure on send will hold up all funds
+            x++;
+        }
+    }
+</pre></div>
+        </div>
+    
+                <div class="finding">
+                    <div class="title">
+                        <h2>Low-level call, unchecked return statement Vulnerability</h2>
+                        <div class="vuln"><b>Vulnerability</b></div>
+                    </div>
+                    <div class="info-row">
+                        <h3>Description</h3>
+                        <p>The unchecked call vulnerability refers to a security weakness in Solidity smart contracts where the return value of certain low-level functions, such as 'call', 'callcode', 'delegatecall', 'send', and 'staticcall', is not properly checked. These functions allow contracts to interact with other contracts, but if the return value is not adequately verified, it can lead to unexpected behaviors and potential vulnerabilities. When an unchecked call is made, the contract does not verify the success or failure of the called function. This can result in various issues, including reentrancy attacks, where an attacker exploits the unchecked call to recursively call back into the calling contract and manipulate its state. Additionally, if the return value is not validated, it could lead to erroneous assumptions about the execution status or data received, potentially causing critical security vulnerabilities.</p>
+                    </div>
+                    <div class="info-row">
+                        <h3>Code Location</h3>
+                        <p> The previous vulnerability has been found in the contract uncheckedCall inside the function uncheckedCall (Line: 465)</p><pre>    function refundAll2() public {
+        uint x = 0;
+        require(gasleft() > 1000);
+        while(refundAddresses.length > 5 && gasleft() > 1000) { // arbitrary length iteration based on how many addresses participated
+            require(payable(refundAddresses[x]).send(refunds[refundAddresses[x]])); // doubly bad, now a single failure on send will hold up all funds
+            x++;
+        }
+    }
+</pre></div>
+        </div>
+    
+                <div class="finding">
+                    <div class="title">
+                        <h2>Low-level call, unchecked return statement Vulnerability</h2>
+                        <div class="vuln"><b>Vulnerability</b></div>
+                    </div>
+                    <div class="info-row">
+                        <h3>Description</h3>
+                        <p>The unchecked call vulnerability refers to a security weakness in Solidity smart contracts where the return value of certain low-level functions, such as 'call', 'callcode', 'delegatecall', 'send', and 'staticcall', is not properly checked. These functions allow contracts to interact with other contracts, but if the return value is not adequately verified, it can lead to unexpected behaviors and potential vulnerabilities. When an unchecked call is made, the contract does not verify the success or failure of the called function. This can result in various issues, including reentrancy attacks, where an attacker exploits the unchecked call to recursively call back into the calling contract and manipulate its state. Additionally, if the return value is not validated, it could lead to erroneous assumptions about the execution status or data received, potentially causing critical security vulnerabilities.</p>
+                    </div>
+                    <div class="info-row">
+                        <h3>Code Location</h3>
+                        <p> The previous vulnerability has been found in the contract uncheckedCall inside the function uncheckedCall (Line: 482)</p><pre>    function refundAll() public {
+        for(uint x; x < refundAddresses.length; x++) { // arbitrary length iteration based on how many addresses participated
+            require(gasleft() > 1000);
+            require(payable(refundAddresses[x]).send(refunds[refundAddresses[x]])); // doubly bad, now a single failure on send will hold up all funds
+        }
+    }
+</pre></div>
+        </div>
+    
+                <div class="finding">
+                    <div class="title">
+                        <h2>Low-level call, unchecked return statement Vulnerability</h2>
+                        <div class="vuln"><b>Vulnerability</b></div>
+                    </div>
+                    <div class="info-row">
+                        <h3>Description</h3>
+                        <p>The unchecked call vulnerability refers to a security weakness in Solidity smart contracts where the return value of certain low-level functions, such as 'call', 'callcode', 'delegatecall', 'send', and 'staticcall', is not properly checked. These functions allow contracts to interact with other contracts, but if the return value is not adequately verified, it can lead to unexpected behaviors and potential vulnerabilities. When an unchecked call is made, the contract does not verify the success or failure of the called function. This can result in various issues, including reentrancy attacks, where an attacker exploits the unchecked call to recursively call back into the calling contract and manipulate its state. Additionally, if the return value is not validated, it could lead to erroneous assumptions about the execution status or data received, potentially causing critical security vulnerabilities.</p>
+                    </div>
+                    <div class="info-row">
+                        <h3>Code Location</h3>
+                        <p> The previous vulnerability has been found in the contract uncheckedCall inside the function uncheckedCall (Line: 491)</p><pre>    function refundAllRequire() public {
+        uint x = 0;
+        while(refundAddresses.length > 5) { // arbitrary length iteration based on how many addresses participated
+            require(gasleft() > 1000);
+            require(payable(refundAddresses[x]).send(refunds[refundAddresses[x]])); // doubly bad, now a single failure on send will hold up all funds
+            x++;
+        }
+    }
+</pre></div>
+        </div>
+    
+                <div class="finding">
+                    <div class="title">
+                        <h2>Low-level call, unchecked return statement Vulnerability</h2>
+                        <div class="vuln"><b>Vulnerability</b></div>
+                    </div>
+                    <div class="info-row">
+                        <h3>Description</h3>
+                        <p>The unchecked call vulnerability refers to a security weakness in Solidity smart contracts where the return value of certain low-level functions, such as 'call', 'callcode', 'delegatecall', 'send', and 'staticcall', is not properly checked. These functions allow contracts to interact with other contracts, but if the return value is not adequately verified, it can lead to unexpected behaviors and potential vulnerabilities. When an unchecked call is made, the contract does not verify the success or failure of the called function. This can result in various issues, including reentrancy attacks, where an attacker exploits the unchecked call to recursively call back into the calling contract and manipulate its state. Additionally, if the return value is not validated, it could lead to erroneous assumptions about the execution status or data received, potentially causing critical security vulnerabilities.</p>
+                    </div>
+                    <div class="info-row">
+                        <h3>Code Location</h3>
+                        <p> The previous vulnerability has been found in the contract uncheckedCall inside the function uncheckedCall (Line: 501)</p><pre>    function refundAll2() public {
+        uint x = 0;
+        require(gasleft() > 1000);
+        while(refundAddresses.length > 5 && gasleft() > 1000) { // arbitrary length iteration based on how many addresses participated
+            require(payable(refundAddresses[x]).send(refunds[refundAddresses[x]])); // doubly bad, now a single failure on send will hold up all funds
+            x++;
+        }
+    }
+</pre></div>
+        </div>
+    
+                <div class="finding">
+                    <div class="title">
+                        <h2>SelfDestruct Vulnerability</h2>
+                        <div class="vuln"><b>Vulnerability</b></div>
+                    </div>
+                    <div class="info-row">
+                        <h3>Description</h3>
+                        <p>This vulnerability arises when the selfdestruct function is not properly handled. The selfdestruct function allows a contract to intentionally destroy itself and transfer any remaining funds to a designated address. However, if this function is not used carefully, it can lead to unintended consequences. The vulnerability occurs when the selfdestruct function is called without appropriate checks or validations. Malicious actors can exploit this vulnerability by deploying a malicious contract and tricking the targeted contract into executing selfdestruct. As a result, all the remaining funds in the targeted contract are transferred to the attacker's designated address, rendering them inaccessible to the contract owner and other legitimate users.</p>
+                    </div>
+                    <div class="info-row">
+                        <h3>Code Location</h3>
+                        <p> The previous vulnerability has been found in the contract selfdestruct inside the function selfdestruct (Line: 224)</p><pre>    function attack(address payable receiver) public payable {
+        // You can simply break the game by sending ether so that
+        // the game balance >= 7 ether
+
+        // cast address to payable
+        selfdestruct(receiver);
+    }
+</pre></div>
+        </div>
+    
+                <div class="finding">
+                    <div class="title">
+                        <h2>Major Gap beetween pragma versions</h2>
+                        <div class="vuln"><b>Vulnerability</b></div>
+                    </div>
+                    <div class="info-row">
+                        <h3>Description</h3>
+                        <p>The pragma version gap vulnerability refers to a situation where there is a significant difference in the Solidity compiler version specified in the pragma directive and the actual compiler version used for compiling the smart contract. This discrepancy can lead to unexpected behavior, including potential vulnerabilities and compatibility issues. If there is a substantial gap between the versions specified, different compiler versions may introduce changes, bug fixes or security enhancements that affect the interpretation and execution of the contract, potentially leading to relying on outdated or incompatible features, exposing the contract to security vulnerabilities.</p>
+                    </div>
+                    <div class="info-row">
+                        <h3>Code Location</h3>
+                        <p> The previous vulnerability has been found in the contract pragmaVersion inside the function pragmaVersion (Line: 87)</p><pre>pragma solidity >=0.8.13 <=0.8.19;
 </pre></div>
         </div>
     
@@ -286,187 +549,7 @@
                     </div>
                     <div class="info-row">
                         <h3>Code Location</h3>
-                        <p> The previous vulnerability has been found in the contract pragmaVersion inside the function pragmaVersion (Line: 56)</p><pre>pragma solidity ^0.4.19;
-</pre></div>
-        </div>
-    
-                <div class="finding">
-                    <div class="title">
-                        <h2>Solidity version [Minor] outdated</h2>
-                        <div class="vuln"><b>Vulnerability</b></div>
-                    </div>
-                    <div class="info-row">
-                        <h3>Description</h3>
-                        <p>The minor version of the pragma directive in the Solidity smart contract specifies a minor compiler version that is outdated compared to the current compiler version. This can result in the contract relying on outdated and potentially insecure features, making it susceptible to known vulnerabilities or attacks that have been addressed in newer compiler versions.</p>
-                    </div>
-                    <div class="info-row">
-                        <h3>Code Location</h3>
-                        <p> The previous vulnerability has been found in the contract pragmaVersion inside the function pragmaVersion (Line: 85)</p><pre>pragma solidity ^0.4.19;
-</pre></div>
-        </div>
-    
-                <div class="finding">
-                    <div class="title">
-                        <h2>Solidity version [Minor] outdated</h2>
-                        <div class="vuln"><b>Vulnerability</b></div>
-                    </div>
-                    <div class="info-row">
-                        <h3>Description</h3>
-                        <p>The minor version of the pragma directive in the Solidity smart contract specifies a minor compiler version that is outdated compared to the current compiler version. This can result in the contract relying on outdated and potentially insecure features, making it susceptible to known vulnerabilities or attacks that have been addressed in newer compiler versions.</p>
-                    </div>
-                    <div class="info-row">
-                        <h3>Code Location</h3>
-                        <p> The previous vulnerability has been found in the contract pragmaVersion inside the function pragmaVersion (Line: 123)</p><pre>pragma solidity ^0.4.19;
-</pre></div>
-        </div>
-    
-                <div class="finding">
-                    <div class="title">
-                        <h2>Solidity version [Minor] outdated</h2>
-                        <div class="vuln"><b>Vulnerability</b></div>
-                    </div>
-                    <div class="info-row">
-                        <h3>Description</h3>
-                        <p>The minor version of the pragma directive in the Solidity smart contract specifies a minor compiler version that is outdated compared to the current compiler version. This can result in the contract relying on outdated and potentially insecure features, making it susceptible to known vulnerabilities or attacks that have been addressed in newer compiler versions.</p>
-                    </div>
-                    <div class="info-row">
-                        <h3>Code Location</h3>
-                        <p> The previous vulnerability has been found in the contract pragmaVersion inside the function pragmaVersion (Line: 159)</p><pre>pragma solidity ^0.4.19;
-</pre></div>
-        </div>
-    
-                <div class="finding">
-                    <div class="title">
-                        <h2>Solidity version [Minor] outdated</h2>
-                        <div class="vuln"><b>Vulnerability</b></div>
-                    </div>
-                    <div class="info-row">
-                        <h3>Description</h3>
-                        <p>The minor version of the pragma directive in the Solidity smart contract specifies a minor compiler version that is outdated compared to the current compiler version. This can result in the contract relying on outdated and potentially insecure features, making it susceptible to known vulnerabilities or attacks that have been addressed in newer compiler versions.</p>
-                    </div>
-                    <div class="info-row">
-                        <h3>Code Location</h3>
-                        <p> The previous vulnerability has been found in the contract pragmaVersion inside the function pragmaVersion (Line: 185)</p><pre>pragma solidity ^0.4.19;
-</pre></div>
-        </div>
-    
-                <div class="finding">
-                    <div class="title">
-                        <h2>Solidity version [Minor] outdated</h2>
-                        <div class="vuln"><b>Vulnerability</b></div>
-                    </div>
-                    <div class="info-row">
-                        <h3>Description</h3>
-                        <p>The minor version of the pragma directive in the Solidity smart contract specifies a minor compiler version that is outdated compared to the current compiler version. This can result in the contract relying on outdated and potentially insecure features, making it susceptible to known vulnerabilities or attacks that have been addressed in newer compiler versions.</p>
-                    </div>
-                    <div class="info-row">
-                        <h3>Code Location</h3>
-                        <p> The previous vulnerability has been found in the contract pragmaVersion inside the function pragmaVersion (Line: 208)</p><pre>pragma solidity ^0.4.19;
-</pre></div>
-        </div>
-    
-                <div class="finding">
-                    <div class="title">
-                        <h2>Solidity version [Minor] outdated</h2>
-                        <div class="vuln"><b>Vulnerability</b></div>
-                    </div>
-                    <div class="info-row">
-                        <h3>Description</h3>
-                        <p>The minor version of the pragma directive in the Solidity smart contract specifies a minor compiler version that is outdated compared to the current compiler version. This can result in the contract relying on outdated and potentially insecure features, making it susceptible to known vulnerabilities or attacks that have been addressed in newer compiler versions.</p>
-                    </div>
-                    <div class="info-row">
-                        <h3>Code Location</h3>
-                        <p> The previous vulnerability has been found in the contract pragmaVersion inside the function pragmaVersion (Line: 277)</p><pre>pragma solidity ^0.4.19;
-</pre></div>
-        </div>
-    
-                <div class="finding">
-                    <div class="title">
-                        <h2>Solidity version [Minor] outdated</h2>
-                        <div class="vuln"><b>Vulnerability</b></div>
-                    </div>
-                    <div class="info-row">
-                        <h3>Description</h3>
-                        <p>The minor version of the pragma directive in the Solidity smart contract specifies a minor compiler version that is outdated compared to the current compiler version. This can result in the contract relying on outdated and potentially insecure features, making it susceptible to known vulnerabilities or attacks that have been addressed in newer compiler versions.</p>
-                    </div>
-                    <div class="info-row">
-                        <h3>Code Location</h3>
-                        <p> The previous vulnerability has been found in the contract pragmaVersion inside the function pragmaVersion (Line: 314)</p><pre>pragma solidity ^0.4.19;
-</pre></div>
-        </div>
-    
-                <div class="finding">
-                    <div class="title">
-                        <h2>Solidity version [Minor] outdated</h2>
-                        <div class="vuln"><b>Vulnerability</b></div>
-                    </div>
-                    <div class="info-row">
-                        <h3>Description</h3>
-                        <p>The minor version of the pragma directive in the Solidity smart contract specifies a minor compiler version that is outdated compared to the current compiler version. This can result in the contract relying on outdated and potentially insecure features, making it susceptible to known vulnerabilities or attacks that have been addressed in newer compiler versions.</p>
-                    </div>
-                    <div class="info-row">
-                        <h3>Code Location</h3>
-                        <p> The previous vulnerability has been found in the contract pragmaVersion inside the function pragmaVersion (Line: 343)</p><pre>pragma solidity ^0.4.19;
-</pre></div>
-        </div>
-    
-                <div class="finding">
-                    <div class="title">
-                        <h2>Solidity version [Minor] outdated</h2>
-                        <div class="vuln"><b>Vulnerability</b></div>
-                    </div>
-                    <div class="info-row">
-                        <h3>Description</h3>
-                        <p>The minor version of the pragma directive in the Solidity smart contract specifies a minor compiler version that is outdated compared to the current compiler version. This can result in the contract relying on outdated and potentially insecure features, making it susceptible to known vulnerabilities or attacks that have been addressed in newer compiler versions.</p>
-                    </div>
-                    <div class="info-row">
-                        <h3>Code Location</h3>
-                        <p> The previous vulnerability has been found in the contract pragmaVersion inside the function pragmaVersion (Line: 375)</p><pre>pragma solidity ^0.4.19;
-</pre></div>
-        </div>
-    
-                <div class="finding">
-                    <div class="title">
-                        <h2>Solidity version [Minor] outdated</h2>
-                        <div class="vuln"><b>Vulnerability</b></div>
-                    </div>
-                    <div class="info-row">
-                        <h3>Description</h3>
-                        <p>The minor version of the pragma directive in the Solidity smart contract specifies a minor compiler version that is outdated compared to the current compiler version. This can result in the contract relying on outdated and potentially insecure features, making it susceptible to known vulnerabilities or attacks that have been addressed in newer compiler versions.</p>
-                    </div>
-                    <div class="info-row">
-                        <h3>Code Location</h3>
-                        <p> The previous vulnerability has been found in the contract pragmaVersion inside the function pragmaVersion (Line: 413)</p><pre>pragma solidity ^0.4.19;
-</pre></div>
-        </div>
-    
-                <div class="finding">
-                    <div class="title">
-                        <h2>Solidity version [Minor] outdated</h2>
-                        <div class="vuln"><b>Vulnerability</b></div>
-                    </div>
-                    <div class="info-row">
-                        <h3>Description</h3>
-                        <p>The minor version of the pragma directive in the Solidity smart contract specifies a minor compiler version that is outdated compared to the current compiler version. This can result in the contract relying on outdated and potentially insecure features, making it susceptible to known vulnerabilities or attacks that have been addressed in newer compiler versions.</p>
-                    </div>
-                    <div class="info-row">
-                        <h3>Code Location</h3>
-                        <p> The previous vulnerability has been found in the contract pragmaVersion inside the function pragmaVersion (Line: 436)</p><pre>pragma solidity ^0.4.19;
-</pre></div>
-        </div>
-    
-                <div class="finding">
-                    <div class="title">
-                        <h2>Solidity version [Minor] outdated</h2>
-                        <div class="vuln"><b>Vulnerability</b></div>
-                    </div>
-                    <div class="info-row">
-                        <h3>Description</h3>
-                        <p>The minor version of the pragma directive in the Solidity smart contract specifies a minor compiler version that is outdated compared to the current compiler version. This can result in the contract relying on outdated and potentially insecure features, making it susceptible to known vulnerabilities or attacks that have been addressed in newer compiler versions.</p>
-                    </div>
-                    <div class="info-row">
-                        <h3>Code Location</h3>
-                        <p> The previous vulnerability has been found in the contract pragmaVersion inside the function pragmaVersion (Line: 469)</p><pre>pragma solidity ^0.4.18;
+                        <p> The previous vulnerability has been found in the contract pragmaVersion inside the function pragmaVersion (Line: 334)</p><pre>pragma solidity > 0.7.1;
 </pre></div>
         </div>
     
@@ -481,202 +564,67 @@
                     </div>
                     <div class="info-row">
                         <h3>Code Location</h3>
-                        <p> The previous vulnerability has been found in the contract integer inside the function integer (Line: 8)</p><pre>pragma solidity ^0.4.19;
+                        <p> The previous vulnerability has been found in the contract integer inside the function integer (Line: 334)</p><pre>pragma solidity > 0.7.1;
 </pre></div>
         </div>
     
                 <div class="finding">
                     <div class="title">
-                        <h2>Integer Overflow & Underflow [Outdated Version]</h2>
+                        <h2>Integer Overflow & Underflow [Unchecked Modifier]</h2>
                         <div class="vuln"><b>Vulnerability</b></div>
                     </div>
                     <div class="info-row">
                         <h3>Description</h3>
-                        <p>Integer overflow and underflow are vulnerabilities found in Solidity smart contracts in versions prior to 0.8.0. Integer overflow occurs when the value of an integer variable exceeds its maximum range, causing it to wrap around to the minimum value. On the other hand, integer underflow happens when the value goes below its minimum range, it causing it to wrap around to the maximum value. These vulnerabilities can lead to unexpected calculations and behaviors, potentially allowing malicious actors to manipulate the contract's state or control its execution flow.</p>
+                        <p>Integer overflow and underflow happen when the unchecked modifier is used, it is advised to use the unchecked modifier carefully. When the unchecked modifier is used, arithmetic operations on integer variables are performed without boundary checks. This can lead to unexpected and potentially malicious behavior if the calculations exceed the maximum or minimum values of the integer type, causing values to wrap around to the opposite end. This vulnerability can result in incorrect calculations, unexpected behaviors, or even the loss of funds in financial contracts.</p>
                     </div>
                     <div class="info-row">
                         <h3>Code Location</h3>
-                        <p> The previous vulnerability has been found in the contract integer inside the function integer (Line: 56)</p><pre>pragma solidity ^0.4.19;
+                        <p> The previous vulnerability has been found in the contract integer inside the function integer (Line: 408)</p><pre>    function add(uint x, uint y) external pure returns (uint) {
+        unchecked {
+            return x + y;
+        }
+    }
 </pre></div>
         </div>
     
                 <div class="finding">
                     <div class="title">
-                        <h2>Integer Overflow & Underflow [Outdated Version]</h2>
+                        <h2>Integer Overflow & Underflow [Unchecked Modifier]</h2>
                         <div class="vuln"><b>Vulnerability</b></div>
                     </div>
                     <div class="info-row">
                         <h3>Description</h3>
-                        <p>Integer overflow and underflow are vulnerabilities found in Solidity smart contracts in versions prior to 0.8.0. Integer overflow occurs when the value of an integer variable exceeds its maximum range, causing it to wrap around to the minimum value. On the other hand, integer underflow happens when the value goes below its minimum range, it causing it to wrap around to the maximum value. These vulnerabilities can lead to unexpected calculations and behaviors, potentially allowing malicious actors to manipulate the contract's state or control its execution flow.</p>
+                        <p>Integer overflow and underflow happen when the unchecked modifier is used, it is advised to use the unchecked modifier carefully. When the unchecked modifier is used, arithmetic operations on integer variables are performed without boundary checks. This can lead to unexpected and potentially malicious behavior if the calculations exceed the maximum or minimum values of the integer type, causing values to wrap around to the opposite end. This vulnerability can result in incorrect calculations, unexpected behaviors, or even the loss of funds in financial contracts.</p>
                     </div>
                     <div class="info-row">
                         <h3>Code Location</h3>
-                        <p> The previous vulnerability has been found in the contract integer inside the function integer (Line: 85)</p><pre>pragma solidity ^0.4.19;
+                        <p> The previous vulnerability has been found in the contract integer inside the function integer (Line: 414)</p><pre>    function sub(uint x, uint y) external pure returns (uint) {
+        unchecked {
+            return x - y;
+        }
+    }
 </pre></div>
         </div>
     
                 <div class="finding">
                     <div class="title">
-                        <h2>Integer Overflow & Underflow [Outdated Version]</h2>
+                        <h2>Integer Overflow & Underflow [Unchecked Modifier]</h2>
                         <div class="vuln"><b>Vulnerability</b></div>
                     </div>
                     <div class="info-row">
                         <h3>Description</h3>
-                        <p>Integer overflow and underflow are vulnerabilities found in Solidity smart contracts in versions prior to 0.8.0. Integer overflow occurs when the value of an integer variable exceeds its maximum range, causing it to wrap around to the minimum value. On the other hand, integer underflow happens when the value goes below its minimum range, it causing it to wrap around to the maximum value. These vulnerabilities can lead to unexpected calculations and behaviors, potentially allowing malicious actors to manipulate the contract's state or control its execution flow.</p>
+                        <p>Integer overflow and underflow happen when the unchecked modifier is used, it is advised to use the unchecked modifier carefully. When the unchecked modifier is used, arithmetic operations on integer variables are performed without boundary checks. This can lead to unexpected and potentially malicious behavior if the calculations exceed the maximum or minimum values of the integer type, causing values to wrap around to the opposite end. This vulnerability can result in incorrect calculations, unexpected behaviors, or even the loss of funds in financial contracts.</p>
                     </div>
                     <div class="info-row">
                         <h3>Code Location</h3>
-                        <p> The previous vulnerability has been found in the contract integer inside the function integer (Line: 123)</p><pre>pragma solidity ^0.4.19;
-</pre></div>
-        </div>
-    
-                <div class="finding">
-                    <div class="title">
-                        <h2>Integer Overflow & Underflow [Outdated Version]</h2>
-                        <div class="vuln"><b>Vulnerability</b></div>
-                    </div>
-                    <div class="info-row">
-                        <h3>Description</h3>
-                        <p>Integer overflow and underflow are vulnerabilities found in Solidity smart contracts in versions prior to 0.8.0. Integer overflow occurs when the value of an integer variable exceeds its maximum range, causing it to wrap around to the minimum value. On the other hand, integer underflow happens when the value goes below its minimum range, it causing it to wrap around to the maximum value. These vulnerabilities can lead to unexpected calculations and behaviors, potentially allowing malicious actors to manipulate the contract's state or control its execution flow.</p>
-                    </div>
-                    <div class="info-row">
-                        <h3>Code Location</h3>
-                        <p> The previous vulnerability has been found in the contract integer inside the function integer (Line: 159)</p><pre>pragma solidity ^0.4.19;
-</pre></div>
-        </div>
-    
-                <div class="finding">
-                    <div class="title">
-                        <h2>Integer Overflow & Underflow [Outdated Version]</h2>
-                        <div class="vuln"><b>Vulnerability</b></div>
-                    </div>
-                    <div class="info-row">
-                        <h3>Description</h3>
-                        <p>Integer overflow and underflow are vulnerabilities found in Solidity smart contracts in versions prior to 0.8.0. Integer overflow occurs when the value of an integer variable exceeds its maximum range, causing it to wrap around to the minimum value. On the other hand, integer underflow happens when the value goes below its minimum range, it causing it to wrap around to the maximum value. These vulnerabilities can lead to unexpected calculations and behaviors, potentially allowing malicious actors to manipulate the contract's state or control its execution flow.</p>
-                    </div>
-                    <div class="info-row">
-                        <h3>Code Location</h3>
-                        <p> The previous vulnerability has been found in the contract integer inside the function integer (Line: 185)</p><pre>pragma solidity ^0.4.19;
-</pre></div>
-        </div>
-    
-                <div class="finding">
-                    <div class="title">
-                        <h2>Integer Overflow & Underflow [Outdated Version]</h2>
-                        <div class="vuln"><b>Vulnerability</b></div>
-                    </div>
-                    <div class="info-row">
-                        <h3>Description</h3>
-                        <p>Integer overflow and underflow are vulnerabilities found in Solidity smart contracts in versions prior to 0.8.0. Integer overflow occurs when the value of an integer variable exceeds its maximum range, causing it to wrap around to the minimum value. On the other hand, integer underflow happens when the value goes below its minimum range, it causing it to wrap around to the maximum value. These vulnerabilities can lead to unexpected calculations and behaviors, potentially allowing malicious actors to manipulate the contract's state or control its execution flow.</p>
-                    </div>
-                    <div class="info-row">
-                        <h3>Code Location</h3>
-                        <p> The previous vulnerability has been found in the contract integer inside the function integer (Line: 208)</p><pre>pragma solidity ^0.4.19;
-</pre></div>
-        </div>
-    
-                <div class="finding">
-                    <div class="title">
-                        <h2>Integer Overflow & Underflow [Outdated Version]</h2>
-                        <div class="vuln"><b>Vulnerability</b></div>
-                    </div>
-                    <div class="info-row">
-                        <h3>Description</h3>
-                        <p>Integer overflow and underflow are vulnerabilities found in Solidity smart contracts in versions prior to 0.8.0. Integer overflow occurs when the value of an integer variable exceeds its maximum range, causing it to wrap around to the minimum value. On the other hand, integer underflow happens when the value goes below its minimum range, it causing it to wrap around to the maximum value. These vulnerabilities can lead to unexpected calculations and behaviors, potentially allowing malicious actors to manipulate the contract's state or control its execution flow.</p>
-                    </div>
-                    <div class="info-row">
-                        <h3>Code Location</h3>
-                        <p> The previous vulnerability has been found in the contract integer inside the function integer (Line: 277)</p><pre>pragma solidity ^0.4.19;
-</pre></div>
-        </div>
-    
-                <div class="finding">
-                    <div class="title">
-                        <h2>Integer Overflow & Underflow [Outdated Version]</h2>
-                        <div class="vuln"><b>Vulnerability</b></div>
-                    </div>
-                    <div class="info-row">
-                        <h3>Description</h3>
-                        <p>Integer overflow and underflow are vulnerabilities found in Solidity smart contracts in versions prior to 0.8.0. Integer overflow occurs when the value of an integer variable exceeds its maximum range, causing it to wrap around to the minimum value. On the other hand, integer underflow happens when the value goes below its minimum range, it causing it to wrap around to the maximum value. These vulnerabilities can lead to unexpected calculations and behaviors, potentially allowing malicious actors to manipulate the contract's state or control its execution flow.</p>
-                    </div>
-                    <div class="info-row">
-                        <h3>Code Location</h3>
-                        <p> The previous vulnerability has been found in the contract integer inside the function integer (Line: 314)</p><pre>pragma solidity ^0.4.19;
-</pre></div>
-        </div>
-    
-                <div class="finding">
-                    <div class="title">
-                        <h2>Integer Overflow & Underflow [Outdated Version]</h2>
-                        <div class="vuln"><b>Vulnerability</b></div>
-                    </div>
-                    <div class="info-row">
-                        <h3>Description</h3>
-                        <p>Integer overflow and underflow are vulnerabilities found in Solidity smart contracts in versions prior to 0.8.0. Integer overflow occurs when the value of an integer variable exceeds its maximum range, causing it to wrap around to the minimum value. On the other hand, integer underflow happens when the value goes below its minimum range, it causing it to wrap around to the maximum value. These vulnerabilities can lead to unexpected calculations and behaviors, potentially allowing malicious actors to manipulate the contract's state or control its execution flow.</p>
-                    </div>
-                    <div class="info-row">
-                        <h3>Code Location</h3>
-                        <p> The previous vulnerability has been found in the contract integer inside the function integer (Line: 343)</p><pre>pragma solidity ^0.4.19;
-</pre></div>
-        </div>
-    
-                <div class="finding">
-                    <div class="title">
-                        <h2>Integer Overflow & Underflow [Outdated Version]</h2>
-                        <div class="vuln"><b>Vulnerability</b></div>
-                    </div>
-                    <div class="info-row">
-                        <h3>Description</h3>
-                        <p>Integer overflow and underflow are vulnerabilities found in Solidity smart contracts in versions prior to 0.8.0. Integer overflow occurs when the value of an integer variable exceeds its maximum range, causing it to wrap around to the minimum value. On the other hand, integer underflow happens when the value goes below its minimum range, it causing it to wrap around to the maximum value. These vulnerabilities can lead to unexpected calculations and behaviors, potentially allowing malicious actors to manipulate the contract's state or control its execution flow.</p>
-                    </div>
-                    <div class="info-row">
-                        <h3>Code Location</h3>
-                        <p> The previous vulnerability has been found in the contract integer inside the function integer (Line: 375)</p><pre>pragma solidity ^0.4.19;
-</pre></div>
-        </div>
-    
-                <div class="finding">
-                    <div class="title">
-                        <h2>Integer Overflow & Underflow [Outdated Version]</h2>
-                        <div class="vuln"><b>Vulnerability</b></div>
-                    </div>
-                    <div class="info-row">
-                        <h3>Description</h3>
-                        <p>Integer overflow and underflow are vulnerabilities found in Solidity smart contracts in versions prior to 0.8.0. Integer overflow occurs when the value of an integer variable exceeds its maximum range, causing it to wrap around to the minimum value. On the other hand, integer underflow happens when the value goes below its minimum range, it causing it to wrap around to the maximum value. These vulnerabilities can lead to unexpected calculations and behaviors, potentially allowing malicious actors to manipulate the contract's state or control its execution flow.</p>
-                    </div>
-                    <div class="info-row">
-                        <h3>Code Location</h3>
-                        <p> The previous vulnerability has been found in the contract integer inside the function integer (Line: 413)</p><pre>pragma solidity ^0.4.19;
-</pre></div>
-        </div>
-    
-                <div class="finding">
-                    <div class="title">
-                        <h2>Integer Overflow & Underflow [Outdated Version]</h2>
-                        <div class="vuln"><b>Vulnerability</b></div>
-                    </div>
-                    <div class="info-row">
-                        <h3>Description</h3>
-                        <p>Integer overflow and underflow are vulnerabilities found in Solidity smart contracts in versions prior to 0.8.0. Integer overflow occurs when the value of an integer variable exceeds its maximum range, causing it to wrap around to the minimum value. On the other hand, integer underflow happens when the value goes below its minimum range, it causing it to wrap around to the maximum value. These vulnerabilities can lead to unexpected calculations and behaviors, potentially allowing malicious actors to manipulate the contract's state or control its execution flow.</p>
-                    </div>
-                    <div class="info-row">
-                        <h3>Code Location</h3>
-                        <p> The previous vulnerability has been found in the contract integer inside the function integer (Line: 436)</p><pre>pragma solidity ^0.4.19;
-</pre></div>
-        </div>
-    
-                <div class="finding">
-                    <div class="title">
-                        <h2>Integer Overflow & Underflow [Outdated Version]</h2>
-                        <div class="vuln"><b>Vulnerability</b></div>
-                    </div>
-                    <div class="info-row">
-                        <h3>Description</h3>
-                        <p>Integer overflow and underflow are vulnerabilities found in Solidity smart contracts in versions prior to 0.8.0. Integer overflow occurs when the value of an integer variable exceeds its maximum range, causing it to wrap around to the minimum value. On the other hand, integer underflow happens when the value goes below its minimum range, it causing it to wrap around to the maximum value. These vulnerabilities can lead to unexpected calculations and behaviors, potentially allowing malicious actors to manipulate the contract's state or control its execution flow.</p>
-                    </div>
-                    <div class="info-row">
-                        <h3>Code Location</h3>
-                        <p> The previous vulnerability has been found in the contract integer inside the function integer (Line: 469)</p><pre>pragma solidity ^0.4.18;
+                        <p> The previous vulnerability has been found in the contract integer inside the function integer (Line: 420)</p><pre>    function sumOfCubes(uint x, uint y) external pure returns (uint) {
+        unchecked {
+            uint x3 = x * x * x;
+            uint y3 = y * y * y;
+
+            return x3 + y3;
+        }
+    }
 </pre></div>
         </div>
     
@@ -691,49 +639,147 @@
                     </div>
                     <div class="info-row">
                         <h3>Code Location</h3>
-                        <p> The previous vulnerability has been found in the contract tx.origin inside the function tx.origin (Line: 424)</p><pre>    function withdrawAll(address _recipient) public {
-        require(tx.origin == owner);
-        _recipient.transfer(this.balance); 
+                        <p> The previous vulnerability has been found in the contract tx.origin inside the function tx.origin (Line: 281)</p><pre>    function doSomething(uint _num) public {
+        lib.delegatecall(abi.encodeWithSignature("doSomething(uint256)", _num));
+        address x = tx.origin;
+        //function transfer
+        payable(x).transfer(2);
+        payable(x).send(2);
+
     }
 </pre></div>
         </div>
     
                 <div class="finding">
                     <div class="title">
-                        <h2>Save Gas: change 'transfer' for 'call'</h2>
-                        <div class="warn">Warning</div>
+                        <h2>Tx.origin vulnerability</h2>
+                        <div class="vuln"><b>Vulnerability</b></div>
                     </div>
                     <div class="info-row">
                         <h3>Description</h3>
-                        <p>When using 'transfer', a fixed amount of gas is allocated for the execution of the called contract. This function do not allow for specifying a custom amount of gas or handling the return value, limiting their flexibility. By changing the 'transfer' function by 'call', developers can optimize gas usage, handle exceptions, and react accordingly based on the return value.</p>
+                        <p>This vunerability happens when the tx.origin global variable is used for access control or authentication purposes. This variable provides the original external sender of the transaction, but relying on it for security checks can lead to exploitable vulnerabilities. The vulnerability occurs because tx.origin does not represent the direct caller of the contract's function. If there is a chain of contract calls or interactions, the tx.origin will always reflect the original external sender, even if an intermediate contract invoked the function. This can be manipulated by attackers who control intermediate contracts to impersonate the original sender.</p>
                     </div>
                     <div class="info-row">
                         <h3>Code Location</h3>
-                        <p> The previous vulnerability has been found in the contract transfer inside the function transfer (Line: 44)</p><pre>    function claimReward() public {
-        // ensure the game is complete
-        require(this.balance == finalMileStone);
-        // ensure there is a reward to give
-        require(redeemableEther[msg.sender] > 0); 
-        redeemableEther[msg.sender] = 0;
-        msg.sender.transfer(redeemableEther[msg.sender]);
+                        <p> The previous vulnerability has been found in the contract tx.origin inside the function tx.origin (Line: 387)</p><pre>    function transfer(address payable _to, uint _amount) public {
+        require(tx.origin == owner, "Not owner");
+
+        (bool sent, ) = _to.call{value: _amount}("");
+        require(sent, "Failed to send Ether");
     }
 </pre></div>
         </div>
     
                 <div class="finding">
                     <div class="title">
-                        <h2>Save Gas: change 'transfer' for 'call'</h2>
+                        <h2>Possible Reentrancy vulnerability, modifier found</h2>
                         <div class="warn">Warning</div>
                     </div>
                     <div class="info-row">
                         <h3>Description</h3>
-                        <p>When using 'transfer', a fixed amount of gas is allocated for the execution of the called contract. This function do not allow for specifying a custom amount of gas or handling the return value, limiting their flexibility. By changing the 'transfer' function by 'call', developers can optimize gas usage, handle exceptions, and react accordingly based on the return value.</p>
+                        <p>Although a 'nonReentrant' modifier that could prevent a reentrancy vulnerability has been found, it is advisable to review the function and make sure it is truly securized. Make sure the implementation is ReentrancyGuard from OpenZeppelin</p>
                     </div>
                     <div class="info-row">
                         <h3>Code Location</h3>
-                        <p> The previous vulnerability has been found in the contract transfer inside the function transfer (Line: 105)</p><pre>  function collectEther() public {
-      msg.sender.transfer(this.balance);
-  }
+                        <p> The previous vulnerability has been found in the contract reentrancy inside the function reentrancy (Line: 80)</p><pre>function withdrawAll() payable nonReentrant public {
+
+    uint256 balance = balances[msg.sender];
+    require(balance > 0, "Insufficient balance");
+
+    (bool success, ) = msg.sender.call{value: balance}("");
+    require(success, "Failed to send Ether");
+
+    balances[msg.sender] = 0;
+}
+</pre></div>
+        </div>
+    
+                <div class="finding">
+                    <div class="title">
+                        <h2>Possible selfdestruct vulnerability, require owner found</h2>
+                        <div class="warn">Warning</div>
+                    </div>
+                    <div class="info-row">
+                        <h3>Description</h3>
+                        <p>Although a require could prevent calling 'selfdestruct' has been found, it is advisable to review the function and make sure it is securized. Make sure the 'selfdestruct' function can only be called by the owner (contract deployer).</p>
+                    </div>
+                    <div class="info-row">
+                        <h3>Code Location</h3>
+                        <p> The previous vulnerability has been found in the contract selfdestruct inside the function selfdestruct (Line: 158)</p><pre>    function attack(address payable receiver) public payable {
+        require(msg.sender == owner);
+        // You can simply break the game by sending ether so that
+        // the game balance >= 7 ether
+
+        // cast address to payable
+        selfdestruct(receiver);
+    }
+</pre></div>
+        </div>
+    
+                <div class="finding">
+                    <div class="title">
+                        <h2>Possible selfdestruct vulnerability, OnlyOwner found</h2>
+                        <div class="warn">Warning</div>
+                    </div>
+                    <div class="info-row">
+                        <h3>Description</h3>
+                        <p>Although a onlyOwner modifier that could prevent calling 'selfdestruct' has been found, it is advisable to review the function and make sure it is securized. Make sure the 'selfdestruct' function can only be called by the owner (contract deployer).</p>
+                    </div>
+                    <div class="info-row">
+                        <h3>Code Location</h3>
+                        <p> The previous vulnerability has been found in the contract selfdestruct inside the function selfdestruct (Line: 166)</p><pre>    function attack2(address payable receiver) onlyOwner public payable {
+        // You can simply break the game by sending ether so that
+        // the game balance >= 7 ether
+
+        // cast address to payable
+        selfdestruct(receiver);
+    }
+</pre></div>
+        </div>
+    
+                <div class="finding">
+                    <div class="title">
+                        <h2>Possible selfdestruct vulnerability, Private found</h2>
+                        <div class="warn">Warning</div>
+                    </div>
+                    <div class="info-row">
+                        <h3>Description</h3>
+                        <p>Although a private modifier that could prevent calling 'selfdestruct' has been found, it is advisable to review the function and make sure it is securized. Make sure the 'selfdestruct' function can only be called by the owner (contract deployer).</p>
+                    </div>
+                    <div class="info-row">
+                        <h3>Code Location</h3>
+                        <p> The previous vulnerability has been found in the contract selfdestruct inside the function selfdestruct (Line: 174)</p><pre>       function attack3(address payable receiver) private {
+        // You can simply break the game by sending ether so that
+        // the game balance >= 7 ether
+
+        // cast address to payable
+        selfdestruct(receiver);
+    }
+</pre></div>
+        </div>
+    
+                <div class="finding">
+                    <div class="title">
+                        <h2>Block Timestamp Manipulation Vulnerability [block.timestamp]</h2>
+                        <div class="warn">Warning</div>
+                    </div>
+                    <div class="info-row">
+                        <h3>Description</h3>
+                        <p>The block timestamp manipulation vulnerability refers to a security issue in Solidity smart contracts that arises when the block.timestamp variable is used for critical operations such as time-based access control or timestamp-based calculations. This value can be manipulated by miners, compromising the integrity and functionality of the contract. If it is being used for critical time operations, it is advisable to avoid relying solely on block.timestamp, but use alternatives as oracles for critical time-dependent operations.</p>
+                    </div>
+                    <div class="info-row">
+                        <h3>Code Location</h3>
+                        <p> The previous vulnerability has been found in the contract timestamp inside the function timestamp (Line: 361)</p><pre>    function spin() external payable {
+        require(msg.value == 10 ether); // must send 10 ether to play
+        require(block.number != pastBlockTime); // only 1 transaction per block
+
+        pastBlockTime = block.timestamp;
+
+        if (block.number % 15 == 0) {
+            (bool sent, ) = msg.sender.call{value: address(this).balance}("");
+            require(sent, "Failed to send Ether");
+        }
+    }
 </pre></div>
         </div>
     
@@ -748,12 +794,11 @@
                     </div>
                     <div class="info-row">
                         <h3>Code Location</h3>
-                        <p> The previous vulnerability has been found in the contract delegatecall inside the function delegatecall (Line: 142)</p><pre>    function withdraw() {
+                        <p> The previous vulnerability has been found in the contract delegatecall inside the function delegatecall (Line: 257)</p><pre>    function withdraw() public payable{
         withdrawalCounter += 1;
-        // calculate the fibonacci number for the current withdrawal user
         // this sets calculatedFibNumber
-        require(fibonacciLibrary.delegatecall(fibSig, withdrawalCounter));
-        msg.sender.transfer(calculatedFibNumber * 1 ether);
+        fibonacciLibrary.delegatecall(abi.encode(fibSig, withdrawalCounter));
+        payable(msg.sender).transfer(calculatedFibNumber * 1 ether);
     }
 </pre></div>
         </div>
@@ -769,12 +814,11 @@
                     </div>
                     <div class="info-row">
                         <h3>Code Location</h3>
-                        <p> The previous vulnerability has been found in the contract transfer inside the function transfer (Line: 143)</p><pre>    function withdraw() {
+                        <p> The previous vulnerability has been found in the contract transfer inside the function transfer (Line: 258)</p><pre>    function withdraw() public payable{
         withdrawalCounter += 1;
-        // calculate the fibonacci number for the current withdrawal user
         // this sets calculatedFibNumber
-        require(fibonacciLibrary.delegatecall(fibSig, withdrawalCounter));
-        msg.sender.transfer(calculatedFibNumber * 1 ether);
+        fibonacciLibrary.delegatecall(abi.encode(fibSig, withdrawalCounter));
+        payable(msg.sender).transfer(calculatedFibNumber * 1 ether);
     }
 </pre></div>
         </div>
@@ -790,8 +834,30 @@
                     </div>
                     <div class="info-row">
                         <h3>Code Location</h3>
-                        <p> The previous vulnerability has been found in the contract delegatecall inside the function delegatecall (Line: 148)</p><pre>    function() public {
-        require(fibonacciLibrary.delegatecall(msg.data));
+                        <p> The previous vulnerability has been found in the contract delegatecall inside the function delegatecall (Line: 263)</p><pre>    function pp() public {
+        fibonacciLibrary.delegatecall(msg.data);
+    }
+</pre></div>
+        </div>
+    
+                <div class="finding">
+                    <div class="title">
+                        <h2>Delegatecall vulnerability</h2>
+                        <div class="warn">Warning</div>
+                    </div>
+                    <div class="info-row">
+                        <h3>Description</h3>
+                        <p>Delegatecall is a low-level function that allows a contract to execute code from another contract while preserving the calling contract's storage and context. If an attacker can manipulate the delegatecall to execute malicious code, they may be able to manipulate the state of the calling contract or execute unauthorized operations. The attacker can potentially override important contract functions, bypass access controls, or even take control of the contract's execution flow. This can result in financial losses, unauthorized access, or other malicious activities.</p>
+                    </div>
+                    <div class="info-row">
+                        <h3>Code Location</h3>
+                        <p> The previous vulnerability has been found in the contract delegatecall inside the function delegatecall (Line: 280)</p><pre>    function doSomething(uint _num) public {
+        lib.delegatecall(abi.encodeWithSignature("doSomething(uint256)", _num));
+        address x = tx.origin;
+        //function transfer
+        payable(x).transfer(2);
+        payable(x).send(2);
+
     }
 </pre></div>
         </div>
@@ -807,29 +873,14 @@
                     </div>
                     <div class="info-row">
                         <h3>Code Location</h3>
-                        <p> The previous vulnerability has been found in the contract transfer inside the function transfer (Line: 174)</p><pre>    function sellTokens(uint tokens) public {
-        require(balances[msg.sender] >= tokens);
-        uint eth = tokens/tokensPerEth; 
-        balances[msg.sender] -= tokens;
-        msg.sender.transfer(eth*weiPerEth); //
+                        <p> The previous vulnerability has been found in the contract transfer inside the function transfer (Line: 283)</p><pre>    function doSomething(uint _num) public {
+        lib.delegatecall(abi.encodeWithSignature("doSomething(uint256)", _num));
+        address x = tx.origin;
+        //function transfer
+        payable(x).transfer(2);
+        payable(x).send(2);
+
     }
-</pre></div>
-        </div>
-    
-                <div class="finding">
-                    <div class="title">
-                        <h2>Save Gas: change 'transfer' for 'call'</h2>
-                        <div class="warn">Warning</div>
-                    </div>
-                    <div class="info-row">
-                        <h3>Description</h3>
-                        <p>When using 'transfer', a fixed amount of gas is allocated for the execution of the called contract. This function do not allow for specifying a custom amount of gas or handling the return value, limiting their flexibility. By changing the 'transfer' function by 'call', developers can optimize gas usage, handle exceptions, and react accordingly based on the return value.</p>
-                    </div>
-                    <div class="info-row">
-                        <h3>Code Location</h3>
-                        <p> The previous vulnerability has been found in the contract transfer inside the function transfer (Line: 196)</p><pre>     function _sendWinnings() {
-         msg.sender.transfer(this.balance);
-     }
 </pre></div>
         </div>
     
@@ -844,7 +895,29 @@
                     </div>
                     <div class="info-row">
                         <h3>Code Location</h3>
-                        <p> The previous vulnerability has been found in the contract send inside the function send (Line: 324)</p><pre>    function sendToWinner() public {
+                        <p> The previous vulnerability has been found in the contract send inside the function send (Line: 284)</p><pre>    function doSomething(uint _num) public {
+        lib.delegatecall(abi.encodeWithSignature("doSomething(uint256)", _num));
+        address x = tx.origin;
+        //function transfer
+        payable(x).transfer(2);
+        payable(x).send(2);
+
+    }
+</pre></div>
+        </div>
+    
+                <div class="finding">
+                    <div class="title">
+                        <h2>Save Gas: change 'send' for 'call'</h2>
+                        <div class="warn">Warning</div>
+                    </div>
+                    <div class="info-row">
+                        <h3>Description</h3>
+                        <p>When using 'send', a fixed amount of gas is allocated for the execution of the called contract. This function do not allow for specifying a custom amount of gas or handling the return value, limiting their flexibility. By changing the 'send' function by 'call', developers can optimize gas usage, handle exceptions, and react accordingly based on the return value.</p>
+                    </div>
+                    <div class="info-row">
+                        <h3>Code Location</h3>
+                        <p> The previous vulnerability has been found in the contract send inside the function send (Line: 306)</p><pre>    function sendToWinnerVuln() public {
         require(!payedOut);
         winner.send(winAmount);
         payedOut = true;
@@ -863,73 +936,139 @@
                     </div>
                     <div class="info-row">
                         <h3>Code Location</h3>
-                        <p> The previous vulnerability has been found in the contract send inside the function send (Line: 330)</p><pre>    function withdrawLeftOver() public {
-        require(payedOut);
-        msg.sender.send(this.balance);
+                        <p> The previous vulnerability has been found in the contract send inside the function send (Line: 316)</p><pre>    function sendToWinner() public {
+        require(!payedOut);
+        (bool success) = winner.send(winAmount);
+        payedOut = true;
     }
 </pre></div>
         </div>
     
                 <div class="finding">
                     <div class="title">
-                        <h2>Save Gas: change 'transfer' for 'call'</h2>
+                        <h2>Save Gas: change 'send' for 'call'</h2>
                         <div class="warn">Warning</div>
                     </div>
                     <div class="info-row">
                         <h3>Description</h3>
-                        <p>When using 'transfer', a fixed amount of gas is allocated for the execution of the called contract. This function do not allow for specifying a custom amount of gas or handling the return value, limiting their flexibility. By changing the 'transfer' function by 'call', developers can optimize gas usage, handle exceptions, and react accordingly based on the return value.</p>
+                        <p>When using 'send', a fixed amount of gas is allocated for the execution of the called contract. This function do not allow for specifying a custom amount of gas or handling the return value, limiting their flexibility. By changing the 'send' function by 'call', developers can optimize gas usage, handle exceptions, and react accordingly based on the return value.</p>
                     </div>
                     <div class="info-row">
                         <h3>Code Location</h3>
-                        <p> The previous vulnerability has been found in the contract transfer inside the function transfer (Line: 425)</p><pre>    function withdrawAll(address _recipient) public {
-        require(tx.origin == owner);
-        _recipient.transfer(this.balance); 
+                        <p> The previous vulnerability has been found in the contract send inside the function send (Line: 446)</p><pre>    function refundAll() public {
+        for(uint x; x < refundAddresses.length; x++) { // arbitrary length iteration based on how many addresses participated
+            require(gasleft() > 1000);
+            require(payable(refundAddresses[x]).send(refunds[refundAddresses[x]])); // doubly bad, now a single failure on send will hold up all funds
+        }
     }
 </pre></div>
         </div>
     
                 <div class="finding">
                     <div class="title">
-                        <h2>Save Gas: change 'transfer' for 'call'</h2>
+                        <h2>Save Gas: change 'send' for 'call'</h2>
                         <div class="warn">Warning</div>
                     </div>
                     <div class="info-row">
                         <h3>Description</h3>
-                        <p>When using 'transfer', a fixed amount of gas is allocated for the execution of the called contract. This function do not allow for specifying a custom amount of gas or handling the return value, limiting their flexibility. By changing the 'transfer' function by 'call', developers can optimize gas usage, handle exceptions, and react accordingly based on the return value.</p>
+                        <p>When using 'send', a fixed amount of gas is allocated for the execution of the called contract. This function do not allow for specifying a custom amount of gas or handling the return value, limiting their flexibility. By changing the 'send' function by 'call', developers can optimize gas usage, handle exceptions, and react accordingly based on the return value.</p>
                     </div>
                     <div class="info-row">
                         <h3>Code Location</h3>
-                        <p> The previous vulnerability has been found in the contract transfer inside the function transfer (Line: 456)</p><pre>    function withdraw() public {
-        require(balances[msg.sender] > 0);
-        require(now > lockTime[msg.sender]);
-        balances[msg.sender] = 0;
-        msg.sender.transfer(balances[msg.sender]);
+                        <p> The previous vulnerability has been found in the contract send inside the function send (Line: 455)</p><pre>    function refundAllRequire() public {
+        uint x = 0;
+        while(refundAddresses.length > 5) { // arbitrary length iteration based on how many addresses participated
+            require(gasleft() > 1000);
+            require(payable(refundAddresses[x]).send(refunds[refundAddresses[x]])); // doubly bad, now a single failure on send will hold up all funds
+            x++;
+        }
     }
 </pre></div>
         </div>
     
                 <div class="finding">
                     <div class="title">
-                        <h2>Denial of Service (DoS) by for loop</h2>
+                        <h2>Save Gas: change 'send' for 'call'</h2>
                         <div class="warn">Warning</div>
                     </div>
                     <div class="info-row">
                         <h3>Description</h3>
-                        <p>This vulnerability arises when a for loop is used to iterate over a large number of iterations, causing excessive computational overhead and consuming an excessive amount of gas. If the gas limit is exceeded, the function won't be executed and can lead to funds loss. If the iterations of the loop could surpass the maximum usage of gas, it is advisable to switch to a pull-over-push design. In this design, instead of using a loop, a public function is created to perform the functionality of each iteration, allowing each person to execute it.</p>
+                        <p>When using 'send', a fixed amount of gas is allocated for the execution of the called contract. This function do not allow for specifying a custom amount of gas or handling the return value, limiting their flexibility. By changing the 'send' function by 'call', developers can optimize gas usage, handle exceptions, and react accordingly based on the return value.</p>
                     </div>
                     <div class="info-row">
                         <h3>Code Location</h3>
-                        <p> The previous vulnerability has been found in the contract dos inside the function dos (Line: 390)</p><pre>  function initMultiowned(address[] _owners, uint _required) {
-    m_numOwners = _owners.length + 1;
-    m_owners[1] = uint(msg.sender);
-    m_ownerIndex[uint(msg.sender)] = 1;
-    for (uint i = 0; i < _owners.length; ++i)
-    {
-      m_owners[2 + i] = uint(_owners[i]);
-      m_ownerIndex[uint(_owners[i])] = 2 + i;
+                        <p> The previous vulnerability has been found in the contract send inside the function send (Line: 465)</p><pre>    function refundAll2() public {
+        uint x = 0;
+        require(gasleft() > 1000);
+        while(refundAddresses.length > 5 && gasleft() > 1000) { // arbitrary length iteration based on how many addresses participated
+            require(payable(refundAddresses[x]).send(refunds[refundAddresses[x]])); // doubly bad, now a single failure on send will hold up all funds
+            x++;
+        }
     }
-    m_required = _required;
-  }
+</pre></div>
+        </div>
+    
+                <div class="finding">
+                    <div class="title">
+                        <h2>Save Gas: change 'send' for 'call'</h2>
+                        <div class="warn">Warning</div>
+                    </div>
+                    <div class="info-row">
+                        <h3>Description</h3>
+                        <p>When using 'send', a fixed amount of gas is allocated for the execution of the called contract. This function do not allow for specifying a custom amount of gas or handling the return value, limiting their flexibility. By changing the 'send' function by 'call', developers can optimize gas usage, handle exceptions, and react accordingly based on the return value.</p>
+                    </div>
+                    <div class="info-row">
+                        <h3>Code Location</h3>
+                        <p> The previous vulnerability has been found in the contract send inside the function send (Line: 482)</p><pre>    function refundAll() public {
+        for(uint x; x < refundAddresses.length; x++) { // arbitrary length iteration based on how many addresses participated
+            require(gasleft() > 1000);
+            require(payable(refundAddresses[x]).send(refunds[refundAddresses[x]])); // doubly bad, now a single failure on send will hold up all funds
+        }
+    }
+</pre></div>
+        </div>
+    
+                <div class="finding">
+                    <div class="title">
+                        <h2>Save Gas: change 'send' for 'call'</h2>
+                        <div class="warn">Warning</div>
+                    </div>
+                    <div class="info-row">
+                        <h3>Description</h3>
+                        <p>When using 'send', a fixed amount of gas is allocated for the execution of the called contract. This function do not allow for specifying a custom amount of gas or handling the return value, limiting their flexibility. By changing the 'send' function by 'call', developers can optimize gas usage, handle exceptions, and react accordingly based on the return value.</p>
+                    </div>
+                    <div class="info-row">
+                        <h3>Code Location</h3>
+                        <p> The previous vulnerability has been found in the contract send inside the function send (Line: 491)</p><pre>    function refundAllRequire() public {
+        uint x = 0;
+        while(refundAddresses.length > 5) { // arbitrary length iteration based on how many addresses participated
+            require(gasleft() > 1000);
+            require(payable(refundAddresses[x]).send(refunds[refundAddresses[x]])); // doubly bad, now a single failure on send will hold up all funds
+            x++;
+        }
+    }
+</pre></div>
+        </div>
+    
+                <div class="finding">
+                    <div class="title">
+                        <h2>Save Gas: change 'send' for 'call'</h2>
+                        <div class="warn">Warning</div>
+                    </div>
+                    <div class="info-row">
+                        <h3>Description</h3>
+                        <p>When using 'send', a fixed amount of gas is allocated for the execution of the called contract. This function do not allow for specifying a custom amount of gas or handling the return value, limiting their flexibility. By changing the 'send' function by 'call', developers can optimize gas usage, handle exceptions, and react accordingly based on the return value.</p>
+                    </div>
+                    <div class="info-row">
+                        <h3>Code Location</h3>
+                        <p> The previous vulnerability has been found in the contract send inside the function send (Line: 501)</p><pre>    function refundAll2() public {
+        uint x = 0;
+        require(gasleft() > 1000);
+        while(refundAddresses.length > 5 && gasleft() > 1000) { // arbitrary length iteration based on how many addresses participated
+            require(payable(refundAddresses[x]).send(refunds[refundAddresses[x]])); // doubly bad, now a single failure on send will hold up all funds
+            x++;
+        }
+    }
 </pre></div>
         </div>
     
@@ -943,9 +1082,50 @@
         <div class="requires-grid">
     
                 <div class="require_card">
-                    <p> No require has been found repeated more than 3 times in the contract </p>
+                    <p> The following require appears 3 times in the contract at lines [21, 78, 97]
+                    </p><pre>require(balance > 0, "Insufficient balance");</pre>
+                    <p> Please consider using the following modifier. It will save gas and make your code more efficient. </p> 
+                    <pre class="modifier">modifier << NAME_OF_YOUR_MODIFIER >> () { 
+    require(balance > 0, "Insufficient balance");
+    _; 
+ } </pre>
                 </div>
-        
+                <div class="require_card">
+                    <p> The following require appears 3 times in the contract at lines [24, 81, 100]
+                    </p><pre>require(success, "Failed to send Ether");</pre>
+                    <p> Please consider using the following modifier. It will save gas and make your code more efficient. </p> 
+                    <pre class="modifier">modifier << NAME_OF_YOUR_MODIFIER >> () { 
+    require(success, "Failed to send Ether");
+    _; 
+ } </pre>
+                </div>
+                <div class="require_card">
+                    <p> The following require appears 4 times in the contract at lines [149, 216, 365, 390]
+                    </p><pre>require(sent, "Failed to send Ether");</pre>
+                    <p> Please consider using the following modifier. It will save gas and make your code more efficient. </p> 
+                    <pre class="modifier">modifier << NAME_OF_YOUR_MODIFIER >> () { 
+    require(sent, "Failed to send Ether");
+    _; 
+ } </pre>
+                </div>
+                <div class="require_card">
+                    <p> The following require appears 6 times in the contract at lines [445, 454, 463, 481, 490, 499]
+                    </p><pre>require(gasleft() > 1000);</pre>
+                    <p> Please consider using the following modifier. It will save gas and make your code more efficient. </p> 
+                    <pre class="modifier">modifier << NAME_OF_YOUR_MODIFIER >> () { 
+    require(gasleft() > 1000);
+    _; 
+ } </pre>
+                </div>
+                <div class="require_card">
+                    <p> The following require appears 6 times in the contract at lines [446, 455, 465, 482, 491, 501]
+                    </p><pre>require(payable(refundAddresses[x]).send(refunds[refundAddresses[x]])); </pre>
+                    <p> Please consider using the following modifier. It will save gas and make your code more efficient. </p> 
+                    <pre class="modifier">modifier << NAME_OF_YOUR_MODIFIER >> () { 
+    require(payable(refundAddresses[x]).send(refunds[refundAddresses[x]])); 
+    _; 
+ } </pre>
+                </div>
             </div>
         </div>
     

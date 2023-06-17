@@ -1,8 +1,9 @@
 # Solidity Guard
 
 <img src="https://github.com/ferrabled/SolidityGuard/blob/main/icon.png" width="150">
+<img src="https://github.com/ferrabled/SolidityGuard/blob/main/icon.png" width="150">
 
-The Solidity Vulnerability Solution Tool is a Python program that searches for vulnerabilities in the source code of Solidity Smart contracts with static analysis by traversing its Abstract Syntax Tree (AST). It also leverages the OpenAI API to provide possible solutions and recommendations for those identified vulnerabilities. 
+SolidityGuard is a Python tool that searches for vulnerabilities in the source code of a Solidity Smart contracts with static analysis by traversing its Abstract Syntax Tree (AST). It also leverages the OpenAI API to provide possible solutions and recommendations for those identified vulnerabilities. The execution finalizes with the generation of a report, identifying the vulnerabilities and warnings, if any.
 
 - [Features](https://github.com/ferrabled/SolidityGuard#Feature) 
 - [Detectors](https://github.com/ferrabled/SolidityGuard#Detectors)
