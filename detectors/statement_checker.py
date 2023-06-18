@@ -1,7 +1,7 @@
 from detectors.AST_utils import get_function_start_end
 from .language.SolidityVisitor import SolidityVisitor
 from .language.SolidityParser import SolidityParser
-from detectors.AST_utils import *
+from detectors.AST_utils import find_child_node_contains
 
 findings = []
 

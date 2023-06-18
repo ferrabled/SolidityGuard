@@ -1,8 +1,7 @@
 from .language.SolidityVisitor import SolidityVisitor
 from .language.SolidityParser import SolidityParser
-from antlr4 import *
 from packaging import version
-from detectors.AST_utils import *
+from detectors.AST_utils import get_function_start_end
 
 
 # - Integer overflow and underflow -> Check that the solidity version is >= 0.8.0 OR use SafeMath if uses unchecked { ... } it's vulnerable
@@ -16,6 +15,7 @@ class SolidityCallVisitor(SolidityVisitor):
             for i in range(ctx.version().getChildCount()):
                 if('>' in ctx.version().getChild(i).getChild(0).getText()):
                     greater = version.parse(ctx.version().getChild(i).getChild(1).getText())
+                    print(greater)
                 else: 
                     less =  version.parse(ctx.version().getChild(i).getChild(1).getText())
             contract_version = less

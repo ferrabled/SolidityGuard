@@ -1,7 +1,6 @@
-from .language.SolidityVisitor import *
-from .language.SolidityParser import *
-from antlr4 import *
-from detectors.AST_utils import *
+from .language.SolidityVisitor import SolidityVisitor
+from .language.SolidityParser import SolidityParser
+from detectors.AST_utils import get_function_start_end, TerminalNode
 
 findings = []
 lock_variables = []
@@ -147,7 +146,7 @@ class SolidityCallVisitor(SolidityVisitor):
                 call_node = self.find_call_node(child)
                 if call_node is not None:
                     return call_node
-        except:
+        except Exception as e:
             return None
         return None
 

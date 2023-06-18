@@ -1,4 +1,4 @@
-from antlr4 import *
+from antlr4 import InputStream, CommonTokenStream
 from detectors.language.SolidityParser import SolidityParser
 from detectors.language.SolidityLexer import SolidityLexer
 from detectors.language.SolidityVisitor import SolidityVisitor
@@ -151,7 +151,7 @@ def main():
     except AttributeError:
         try: # should work on MacOS and most linux versions
             subprocess.call(['open', url])
-        except:
+        except Exception as e:
             print('Could not open URL')    
 
 

@@ -1,6 +1,6 @@
 from .language.SolidityVisitor import SolidityVisitor
 from .language.SolidityParser import SolidityParser
-from detectors.AST_utils import *
+from detectors.AST_utils import get_function_start_end, TerminalNode
 
 findings = []
 
@@ -50,19 +50,16 @@ class SolidityCallVisitor(SolidityVisitor):
             if require is not None:
                 expression = require.expression().functionCallArguments().getText()
                 if 'owner' in str(expression):
-                    print("Possible selfdestruct found")   
                     start, end = get_function_start_end(self_destruct_node) 
                     findings.append(['selfdestruct', 'require owner', selfdestruct_line, [start, end]])
                     return super().visitFunctionDefinition(ctx) 
                 
                 else:
-                    print("Possible selfdestruct found")   
                     start, end = get_function_start_end(self_destruct_node) 
                     findings.append(['selfdestruct', 'vulnerable', selfdestruct_line, [start, end]])
                     return super().visitFunctionDefinition(ctx)
 
             else:
-                print("Possible selfdestruct found")
                 if(selfdestruct_line not in findings):
                     start, end = get_function_start_end(self_destruct_node) 
                     findings.append(['selfdestruct', 'vulnerable', selfdestruct_line, [start, end]])
@@ -81,7 +78,7 @@ class SolidityCallVisitor(SolidityVisitor):
                 call_node = self.find_selfdestruct_node(child)
                 if call_node is not None:
                     return call_node
-        except:
+        except :
             return None
         return None
 

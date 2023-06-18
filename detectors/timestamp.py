@@ -4,6 +4,10 @@ from .language.SolidityParser import SolidityParser
 from antlr4 import TerminalNode
 
 findings = []
+btimestamp = "block.timestamp"
+bnow = "block.now"
+bnumber = "block.number"
+
 
 class SolidityCallVisitor(SolidityVisitor):
     
@@ -21,9 +25,9 @@ class SolidityCallVisitor(SolidityVisitor):
 
 
     def visitBlock(self, ctx: SolidityParser.BlockContext):
-        if ("block.timestamp" in ctx.getText() 
-            or "block.now" in ctx.getText()
-            or "block.number" in ctx.getText()):
+        if (btimestamp in ctx.getText() 
+            or bnow in ctx.getText()
+            or bnumber in ctx.getText()):
             block = self.used_block(ctx.getText())
             print(block, " found")
             block_node = self.find_child_node_contains(ctx, block, SolidityParser.ExpressionContext)
@@ -33,9 +37,9 @@ class SolidityCallVisitor(SolidityVisitor):
     
 
     def used_block(self, text):
-        if "block.timestamp" in text:
-            return "block.timestamp"
-        elif "block.number" in text:
-            return "block.number"
-        elif "block.now" in text:
-            return "block.now"
+        if btimestamp in text:
+            return btimestamp
+        elif bnumber in text:
+            return bnumber
+        elif bnow in text:
+            return bnow

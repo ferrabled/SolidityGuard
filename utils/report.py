@@ -12,7 +12,7 @@ def generate_html(findings: list, recommendations: list, functions: list, requir
     print("Generating html report")
     header = '''
         <!DOCTYPE html>
-        <html>
+        <html lang="en" xml:lang="en">
         <head>
         <link rel="stylesheet" href="utils/style.css">
         <title>Report</title>

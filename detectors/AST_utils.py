@@ -35,6 +35,6 @@ def find_child_node_contains(ctx, text, nodetype):
             call_node = find_child_node_contains(child, text, nodetype)
             if call_node is not None:
                 return call_node
-    except:
+    except Exception as e:
         return None
     return None
